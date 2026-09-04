@@ -1,0 +1,2824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saborê - Confeitaria e Panificação Artesanal</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fdfaf6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e2d7cb;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #cbb9a5;
+    }
+    
+    .tab-active {
+      border-bottom: 3px solid #d97706;
+      color: #92400e;
+      font-weight: 700;
+      background-color: rgba(254, 243, 199, 0.45);
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-area, #print-area * {
+        visibility: visible;
+      }
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="bg-amber-50/25 min-h-screen text-slate-800 flex flex-col antialiased selection:bg-amber-200">
+
+  <!-- CABEÇALHO PRINCIPAL -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-amber-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+      
+      <!-- Logo da Marca -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-xl shadow-inner shadow-amber-700/20 text-white">
+          🥖
+        </div>
+        <div>
+          <span class="font-bold text-base sm:text-lg text-amber-950 tracking-tight block leading-tight">Saborê</span>
+          <span class="text-[10px] uppercase font-semibold tracking-wider text-amber-600 block">Confeitaria e Panificação Artesanal</span>
+        </div>
+      </div>
+
+      <!-- Abas de Navegação -->
+      <nav class="flex space-x-1 sm:space-x-2 h-full overflow-x-auto py-2 items-center text-xs sm:text-sm">
+        <button id="btn-pedido" onclick="alternarAba('pedido')" class="tab-active flex items-center gap-1 px-2.5 py-2 rounded-t-lg transition-all whitespace-nowrap">
+          <span>📝</span> <span>Novo Pedido</span>
+        </button>
+        <button id="btn-encomendas" onclick="alternarAba('encomendas')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>📋</span> <span>Encomendas & Pgto</span>
+          <span id="badge-encomendas-pendentes" class="ml-1 bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full hidden">0</span>
+        </button>
+        <button id="btn-cozinha" onclick="alternarAba('cozinha')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>👨‍🍳</span> <span>Cozinha (KDS)</span>
+          <span id="badge-kds-count" class="ml-1 bg-amber-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+        </button>
+        <button id="btn-fichas" onclick="alternarAba('fichas')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>📖</span> <span>Fichas Técnicas</span>
+        </button>
+        <button id="btn-custograma" onclick="alternarAba('custograma')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>⚖️</span> <span>Custo por Grama</span>
+        </button>
+        <button id="btn-compras" onclick="alternarAba('compras')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>🛒</span> <span>Compras Insumos</span>
+        </button>
+        <button id="btn-estoque" onclick="alternarAba('estoque')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>📦</span> <span>Estoque</span>
+          <span id="badge-stock-alert" class="w-2 h-2 rounded-full bg-rose-500 hidden" title="Itens abaixo do mínimo!"></span>
+        </button>
+        <button id="btn-clientes" onclick="alternarAba('clientes')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>👤</span> <span>Clientes</span>
+        </button>
+        <button id="btn-financeiro" onclick="alternarAba('financeiro')" class="text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap">
+          <span>💰</span> <span>Financeiro</span>
+        </button>
+      </nav>
+
+      <!-- Botão Recarregar Dados Demo -->
+      <div class="hidden xl:flex items-center gap-2">
+        <button onclick="carregarDadosDemonstracao(true)" title="Restaurar dados de exemplo" class="text-xs bg-amber-100/80 hover:bg-amber-200 text-amber-900 px-2.5 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+          <span>🔄</span> Demo
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- CORPO PRINCIPAL -->
+  <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+
+    <!-- ========================================================
+         ABA 1: NOVO PEDIDO
+    ======================================================== -->
+    <section id="aba-pedido" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl shadow-amber-900/5 border border-amber-100 overflow-hidden transition-all">
+      <div class="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-600 p-6 text-white flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 class="text-2xl font-bold flex items-center gap-2">
+            <span>🎂</span> Novo Pedido - Saborê
+          </h1>
+          <p class="text-amber-100 text-sm mt-1">Gere cupom de produção, vincule pagamento, método e envie à cozinha</p>
+        </div>
+        <div class="text-right bg-white/15 px-3 py-1.5 rounded-lg backdrop-blur-xs text-xs font-mono">
+          Nº Pedido: <strong id="proximo-numero-pedido" class="text-amber-200 text-sm">#104</strong>
+        </div>
+      </div>
+
+      <form id="form-pedido" class="p-6 md:p-8 space-y-8" onsubmit="salvarNovoPedido(event)">
+        
+        <!-- 1. DADOS DO CLIENTE -->
+        <div>
+          <div class="flex items-center justify-between border-b border-amber-100 pb-2 mb-4">
+            <h2 class="text-lg font-bold text-amber-950 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-xs flex items-center justify-center font-bold">1</span>
+              Dados do Cliente
+            </h2>
+            <span class="text-xs text-slate-500">Sugere clientes salvos automaticamente</span>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="relative">
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Nome do Cliente *</label>
+              <input type="text" id="pedido-cliente-nome" list="clientes-datalist" placeholder="Ex: Mariana Alencar" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition">
+              <datalist id="clientes-datalist"></datalist>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">WhatsApp / Telefone *</label>
+              <input type="tel" id="pedido-cliente-telefone" placeholder="(11) 98721-4490" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. DETALHES DO PRODUTO & PRODUÇÃO -->
+        <div>
+          <div class="border-b border-amber-100 pb-2 mb-4 flex justify-between items-center">
+            <h2 class="text-lg font-bold text-amber-950 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-xs flex items-center justify-center font-bold">2</span>
+              Detalhes da Produção
+            </h2>
+            <button type="button" onclick="preencherReceitaModelo()" class="text-xs text-amber-700 hover:text-amber-900 font-semibold hover:underline">
+              ⚡ Usar Sugestão Rápida
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Categoria *</label>
+              <select id="pedido-categoria" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none bg-white">
+                <option value="Bolo Festivo">🎂 Bolo Festivo Personalizado</option>
+                <option value="Torta Doce">🥧 Torta Doce Especial</option>
+                <option value="Docinhos Cento">🍬 Docinhos Gourmet (Cento)</option>
+                <option value="Kit Panificação">🥖 Cesta / Kit Panificação Artesanal</option>
+                <option value="Cupcakes / Mini">🧁 Cupcakes Decorados</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Massa / Sabor Base *</label>
+              <input type="text" id="pedido-massa" placeholder="Ex: Chocolate 50% Cacau ou Baunilha" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Tamanho / Peso *</label>
+              <input type="text" id="pedido-tamanho" placeholder="Ex: Aro 20 (2,2 kg) ou 100 un" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Recheio(s) e Cobertura</label>
+              <input type="text" id="pedido-recheio" placeholder="Ex: Brigadeiro Belga + Ninho com Morangos" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Escrita no Topo / Restrições Especiais</label>
+              <input type="text" id="pedido-observacoes" placeholder="Ex: Topo 'Parabéns Helena' / Sem Lactose" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. AGENDAMENTO E VALORES -->
+        <div>
+          <h2 class="text-lg font-bold text-amber-950 border-b border-amber-100 pb-2 mb-4 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-800 text-xs flex items-center justify-center font-bold">3</span>
+            Agendamento & Pagamento
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Data de Entrega *</label>
+              <input type="date" id="pedido-data-entrega" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Horário Limite *</label>
+              <input type="time" id="pedido-hora-entrega" value="14:00" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Modalidade de Envio *</label>
+              <select id="pedido-tipo-envio" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none bg-white">
+                <option value="Retirada no Balcão">🏪 Retirada no Balcão Saborê</option>
+                <option value="Entrega Motoboy / Carro">🛵 Entrega por Motoboy / Carro</option>
+                <option value="Consumo no Local">☕ Consumo no Salão</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 bg-amber-50/70 p-4 rounded-xl border border-amber-200/70">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">Valor Total (R$) *</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-500 text-sm font-medium">R$</span>
+                <input type="number" step="0.50" id="pedido-valor-total" oninput="calcularSaldoRestante()" placeholder="0,00" required class="w-full pl-9 rounded-xl border border-slate-300 p-2.5 text-sm font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">Sinal / Pago (R$)</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-500 text-sm font-medium">R$</span>
+                <input type="number" step="0.50" id="pedido-valor-sinal" oninput="calcularSaldoRestante()" placeholder="0,00" class="w-full pl-9 rounded-xl border border-slate-300 p-2.5 text-sm font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">Status Pagamento</label>
+              <select id="pedido-status-pagamento" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+                <option value="Pendente" class="text-amber-600">⏳ Pendente</option>
+                <option value="Sinal Pago" class="text-blue-600">💳 Sinal Pago (Parcial)</option>
+                <option value="Totalmente Pago" class="text-emerald-600">✅ Totalmente Pago</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">Método de Pgto *</label>
+              <select id="pedido-metodo-pagamento" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+                <option value="Pix">⚡ Pix</option>
+                <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+                <option value="Cartão de Débito">💳 Cartão de Débito</option>
+                <option value="Dinheiro">💵 Dinheiro</option>
+                <option value="Transferência">🏦 Transferência</option>
+                <option value="Pendente">A definir</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-3 flex justify-between items-center text-xs text-slate-600 px-2">
+            <span>Saldo restante na entrega: <strong id="pedido-saldo-restante" class="text-rose-600 font-bold text-sm">R$ 0,00</strong></span>
+            <span class="italic text-slate-400">O valor recebido é registrado no Fluxo de Caixa.</span>
+          </div>
+        </div>
+
+        <!-- BOTÕES DE SUBMISSÃO -->
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <button type="reset" class="px-5 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium transition">
+            Limpar
+          </button>
+          <button type="submit" class="px-7 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-sm font-bold shadow-md shadow-amber-600/30 transition flex items-center gap-2">
+            <span>✨</span> Gravar e Enviar para Cozinha
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ========================================================
+         ABA 2: ENCOMENDAS & PAGAMENTOS
+    ======================================================== -->
+    <section id="aba-encomendas" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+        <div>
+          <h1 class="font-bold text-xl text-amber-950 flex items-center gap-2">
+            <span>📋</span> Controle Geral de Encomendas & Pagamentos
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">Visualize todos os detalhes do pedido, anote pagamentos recebidos e altere métodos de pagamento.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <input type="text" id="filtro-encomendas" oninput="renderizarEncomendas()" placeholder="Buscar por cliente, pedido..." class="text-xs rounded-xl border border-slate-300 p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <select id="filtro-status-encomenda" onchange="renderizarEncomendas()" class="text-xs rounded-xl border border-slate-300 p-2 bg-white focus:outline-none">
+            <option value="todos">Todos os Pagamentos</option>
+            <option value="Pendente">Apenas Pendentes</option>
+            <option value="Sinal Pago">Apenas Sinal Pago</option>
+            <option value="Totalmente Pago">Totalmente Pagos</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Cards de Métricas -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <p class="text-xs text-slate-500 font-medium">Total de Encomendas</p>
+          <p id="encomendas-stat-total" class="text-xl font-bold text-slate-800 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 bg-emerald-50/20">
+          <p class="text-xs text-emerald-700 font-medium">Total Recebido (Sinais + Quitações)</p>
+          <p id="encomendas-stat-pago" class="text-xl font-bold text-emerald-700 mt-1">R$ 0,00</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-rose-200 bg-rose-50/20">
+          <p class="text-xs text-rose-600 font-medium">Saldo Restante a Cobrar</p>
+          <p id="encomendas-stat-pendente" class="text-xl font-bold text-rose-600 mt-1">R$ 0,00</p>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="bg-white rounded-2xl shadow-xs border border-amber-100 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-amber-50/70 border-b border-amber-100 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-3.5">Pedido</th>
+                <th class="p-3.5">Cliente & Contato</th>
+                <th class="p-3.5">Produto / Detalhes</th>
+                <th class="p-3.5">Entrega</th>
+                <th class="p-3.5">Total / Pago / Restante</th>
+                <th class="p-3.5">Status & Método de Pgto</th>
+                <th class="p-3.5 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-encomendas-corpo" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         ABA 3: COZINHA (KDS)
+    ======================================================== -->
+    <section id="aba-cozinha" class="hidden space-y-6">
+      
+      <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl font-bold text-amber-950 flex items-center gap-2">
+            <span>👨‍🍳</span> Painel da Cozinha & Confeitaria Saborê (KDS)
+          </h1>
+          <p class="text-xs text-slate-500 mt-0.5">Acompanhe e movimente o status de produção das encomendas em tempo real.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-xs bg-amber-50 border border-amber-200 text-amber-900 px-3 py-1.5 rounded-lg flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Atualização ao Vivo</span>
+          </div>
+          <button onclick="renderizarKDS()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-medium transition">
+            🔄 Recarregar
+          </button>
+        </div>
+      </div>
+
+      <!-- Colunas Kanban -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Fila -->
+        <div class="bg-slate-100/80 p-4 rounded-2xl border border-slate-200/80 flex flex-col min-h-[500px]">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <h2 class="font-bold text-slate-800 text-sm tracking-wide uppercase">📋 Fila / A Preparar</h2>
+            </div>
+            <span id="contador-fila" class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+          </div>
+          <div id="kds-coluna-fila" class="space-y-4 flex-1"></div>
+        </div>
+
+        <!-- Produção -->
+        <div class="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/70 flex flex-col min-h-[500px]">
+          <div class="flex items-center justify-between border-b border-amber-200 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></span>
+              <h2 class="font-bold text-amber-950 text-sm tracking-wide uppercase">🥣 No Forno / Montagem</h2>
+            </div>
+            <span id="contador-producao" class="bg-amber-200 text-amber-900 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+          </div>
+          <div id="kds-coluna-producao" class="space-y-4 flex-1"></div>
+        </div>
+
+        <!-- Pronto -->
+        <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200/70 flex flex-col min-h-[500px]">
+          <div class="flex items-center justify-between border-b border-emerald-200 pb-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <h2 class="font-bold text-emerald-950 text-sm tracking-wide uppercase">✅ Pronto / Embalado</h2>
+            </div>
+            <span id="contador-pronto" class="bg-emerald-200 text-emerald-900 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+          </div>
+          <div id="kds-coluna-pronto" class="space-y-4 flex-1"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         ABA 4: FICHAS TÉCNICAS
+    ======================================================== -->
+    <section id="aba-fichas" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+        <div>
+          <h1 class="font-bold text-xl text-amber-950 flex items-center gap-2">
+            <span>📖</span> Fichas Técnicas & Receitas Detalhadas
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">Ingredientes dosados em gramas/unidades calculam o CMV automaticamente com base nas últimas compras.</p>
+        </div>
+        <button onclick="abrirModalNovaReceitaDetalhada()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm px-4 py-2.5 rounded-xl font-bold transition shadow-xs flex items-center gap-1.5 self-start sm:self-auto">
+          <span>+</span> Nova Receita Detalhada
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="cards-receitas-container"></div>
+    </section>
+
+    <!-- ========================================================
+         ABA 5: CUSTO POR GRAMA
+    ======================================================== -->
+    <section id="aba-custograma" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+        <div>
+          <h1 class="font-bold text-xl text-amber-950 flex items-center gap-2">
+            <span>⚖️</span> Tabela de Custo dos Insumos por Grama
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">Consulte o custo fracionado por grama (g), ml ou unidade utilizado nas receitas e na precificação.</p>
+        </div>
+        <input type="text" id="filtro-custograma" oninput="renderizarCustoPorGrama()" placeholder="Filtrar ingrediente..." class="text-xs rounded-xl border border-slate-300 p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xs border border-amber-100 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-amber-50/70 border-b border-amber-100 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-3.5">Insumo</th>
+                <th class="p-3.5">Categoria</th>
+                <th class="p-3.5">Embalagem Padrão</th>
+                <th class="p-3.5">Preço Embalagem</th>
+                <th class="p-3.5 font-extrabold text-amber-950">Custo por Grama / Unidade</th>
+                <th class="p-3.5">Equivalente por 100g / 100ml</th>
+                <th class="p-3.5 text-right">Uso nas Receitas</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-custograma-corpo" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         ABA 6: COMPRAS DE INSUMOS
+    ======================================================== -->
+    <section id="aba-compras" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+        <div>
+          <h1 class="font-bold text-xl text-amber-950 flex items-center gap-2">
+            <span>🛒</span> Registro de Compras de Insumos
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">Ao cadastrar uma compra, o custo unitário e o custo por grama são atualizados e recalculam as receitas em cascata.</p>
+        </div>
+        <button onclick="abrirModalNovaCompra()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm px-4 py-2.5 rounded-xl font-bold transition shadow-xs flex items-center gap-1.5 self-start sm:self-auto">
+          <span>+</span> Registrar Nova Compra
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xs border border-amber-100 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-amber-50/70 border-b border-amber-100 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-3.5">Data Compra</th>
+                <th class="p-3.5">Fornecedor / Local</th>
+                <th class="p-3.5">Insumo Comprado</th>
+                <th class="p-3.5">Quantidade Adquirida</th>
+                <th class="p-3.5">Valor Total Pago</th>
+                <th class="p-3.5">Novo Custo Unitário / por g</th>
+                <th class="p-3.5 text-right">Lançado no Caixa?</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-compras-corpo" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         ABA 7: ESTOQUE
+    ======================================================== -->
+    <section id="aba-estoque" class="hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+        <div>
+          <h1 class="font-bold text-xl text-amber-950 flex items-center gap-2">
+            <span>📦</span> Gestão de Estoque & Insumos
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">Controle de insumos, farinhas, embalagens e ponto de recompra automático.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <input type="text" id="filtro-estoque" oninput="filtrarEstoque()" placeholder="Buscar insumo..." class="text-xs rounded-xl border border-slate-300 p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <button onclick="abrirModalNovoInsumo()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm px-4 py-2 rounded-xl font-bold transition shadow-xs flex items-center gap-1.5">
+            <span>+</span> Novo Insumo
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumo Rápido -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200">
+          <p class="text-xs text-slate-500 font-medium">Itens Cadastrados</p>
+          <p id="stat-estoque-total" class="text-xl font-bold text-slate-800 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-rose-200 bg-rose-50/20">
+          <p class="text-xs text-rose-600 font-medium">Itens em Alerta Crítico</p>
+          <p id="stat-estoque-critico" class="text-xl font-bold text-rose-600 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 bg-emerald-50/20">
+          <p class="text-xs text-emerald-600 font-medium">Estoque Regular</p>
+          <p id="stat-estoque-regular" class="text-xl font-bold text-emerald-600 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-amber-200 bg-amber-50/20">
+          <p class="text-xs text-amber-700 font-medium">Valor Total Imobilizado</p>
+          <p id="stat-estoque-valor" class="text-xl font-bold text-amber-800 mt-1">R$ 0,00</p>
+        </div>
+      </div>
+
+      <!-- Tabela de Insumos -->
+      <div class="bg-white rounded-2xl shadow-xs border border-amber-100 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-amber-50/70 border-b border-amber-100 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-4">Insumo / Matéria-Prima</th>
+                <th class="p-4">Categoria</th>
+                <th class="p-4">Estoque Atual</th>
+                <th class="p-4">Mínimo Recomendado</th>
+                <th class="p-4">Custo Embalagem</th>
+                <th class="p-4">Custo Fracionado (g/un)</th>
+                <th class="p-4">Status</th>
+                <th class="p-4 text-right">Ajuste Rápido</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-estoque-corpo" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================
+         ABA 8: CLIENTES (CRM)
+    ======================================================== -->
+    <section id="aba-clientes" class="hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+        <div>
+          <h1 class="font-bold text-xl text-amber-950 flex items-center gap-2">
+            <span>👤</span> Base de Clientes (CRM Saborê)
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">Histórico completo de pedidos, restrições alimentares e contato direto via WhatsApp.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="filtro-cliente" oninput="filtrarClientes()" placeholder="Filtrar cliente..." class="text-xs rounded-xl border border-slate-300 p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <button onclick="abrirModalNovoCliente()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm px-4 py-2 rounded-xl font-bold transition shadow-xs flex items-center gap-1.5">
+            <span>+</span> Novo Cliente
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xs border border-amber-100 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-amber-50/70 border-b border-amber-100 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-4">Cliente</th>
+                <th class="p-4">WhatsApp / Contato</th>
+                <th class="p-4">Preferências & Restrições</th>
+                <th class="p-4 text-center">Pedidos</th>
+                <th class="p-4">Total Gasto</th>
+                <th class="p-4 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-clientes-corpo" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         ABA 9: FINANCEIRO
+    ======================================================== -->
+    <section id="aba-financeiro" class="hidden space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-xs border border-emerald-100">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Entradas / Vendas</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Entradas</span>
+          </div>
+          <p id="fin-total-receitas" class="text-2xl font-bold text-emerald-600 mt-2">R$ 0,00</p>
+          <span class="text-[11px] text-slate-400 mt-1 block">Pedidos finalizados e sinais pagos</span>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-xs border border-rose-100">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Saídas / Despesas</span>
+            <span class="text-xs bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded">Custos</span>
+          </div>
+          <p id="fin-total-despesas" class="text-2xl font-bold text-rose-600 mt-2">R$ 0,00</p>
+          <span class="text-[11px] text-slate-400 mt-1 block">Insumos, gás, embalagens e contas</span>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-xs border border-amber-100">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Saldo em Caixa</span>
+            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">Líquido</span>
+          </div>
+          <p id="fin-saldo-liquido" class="text-2xl font-bold text-amber-600 mt-2">R$ 0,00</p>
+          <span class="text-[11px] text-slate-400 mt-1 block">Lucro operacional do caixa</span>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">A Receber</span>
+            <span class="text-xs bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">Previsão</span>
+          </div>
+          <p id="fin-total-a-receber" class="text-2xl font-bold text-blue-600 mt-2">R$ 0,00</p>
+          <span class="text-[11px] text-slate-400 mt-1 block">Saldos na entrega das encomendas</span>
+        </div>
+      </div>
+
+      <!-- Livro-Caixa -->
+      <div class="bg-white rounded-2xl shadow-xs border border-amber-100 p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h2 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+            <span>📊</span> Histórico de Transações de Caixa
+          </h2>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="abrirModalNovaTransacao('despesa')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-2 rounded-xl font-semibold transition flex items-center gap-1">
+              <span>💸</span> - Lançar Despesa
+            </button>
+            <button onclick="abrirModalNovaTransacao('receita')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-xl font-semibold transition flex items-center gap-1">
+              <span>💰</span> + Lançar Entrada
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-semibold text-xs uppercase">
+              <tr>
+                <th class="p-3">Data</th>
+                <th class="p-3">Descrição / Referência</th>
+                <th class="p-3">Categoria</th>
+                <th class="p-3">Tipo</th>
+                <th class="p-3 text-right">Valor</th>
+                <th class="p-3 text-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-transacoes-corpo" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================================
+       MODAIS
+  ======================================================== -->
+  
+  <!-- MODAL: CUPOM PEDIDO -->
+  <div id="modal-pedido-detalhe" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="fecharModal('modal-pedido-detalhe')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <div id="conteudo-cupom-pedido"></div>
+      <div class="mt-6 flex justify-end gap-3 border-t pt-4">
+        <button onclick="imprimirCupomAtual()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5">
+          <span>🖨️</span> Imprimir Cupom
+        </button>
+        <button onclick="fecharModal('modal-pedido-detalhe')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR PAGAMENTO -->
+  <div id="modal-editar-pagamento" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="fecharModal('modal-editar-pagamento')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 class="font-bold text-lg text-amber-950 mb-1 flex items-center gap-2">
+        <span>💳</span> Atualizar Pagamento do Pedido
+      </h3>
+      <p id="modal-pgto-subtitulo" class="text-xs text-slate-500 mb-4">Pedido #---</p>
+      
+      <form onsubmit="salvarEdicaoPagamento(event)" class="space-y-4 text-sm">
+        <input type="hidden" id="edit-pgto-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Status do Pagamento</label>
+          <select id="edit-pgto-status" class="w-full rounded-xl border border-slate-300 p-2.5 bg-white font-medium">
+            <option value="Pendente">⏳ Pendente (Aguardando Sinal)</option>
+            <option value="Sinal Pago">💳 Sinal Pago (Parcial)</option>
+            <option value="Totalmente Pago">✅ Totalmente Quitado</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Valor Já Recebido (R$)</label>
+          <input type="number" step="0.50" id="edit-pgto-sinal" required class="w-full rounded-xl border border-slate-300 p-2.5 font-bold text-emerald-700">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Método de Pagamento</label>
+          <select id="edit-pgto-metodo" class="w-full rounded-xl border border-slate-300 p-2.5 bg-white font-medium">
+            <option value="Pix">⚡ Pix</option>
+            <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+            <option value="Cartão de Débito">💳 Cartão de Débito</option>
+            <option value="Dinheiro">💵 Dinheiro em Espécie</option>
+            <option value="Transferência">🏦 Transferência Bancária</option>
+            <option value="Pendente">A definir</option>
+          </select>
+        </div>
+        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-slate-600">Total da Encomenda:</span>
+            <span id="modal-pgto-total" class="font-bold text-slate-800">R$ 0,00</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-600">Saldo que faltará:</span>
+            <span id="modal-pgto-restante" class="font-bold text-rose-600">R$ 0,00</span>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="fecharModal('modal-editar-pagamento')" class="px-4 py-2 border rounded-xl text-xs">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">Salvar Pagamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: FICHA TÉCNICA DETALHADA -->
+  <div id="modal-nova-receita-detalhada" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <button onclick="fecharModal('modal-nova-receita-detalhada')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 class="font-bold text-lg text-amber-950 mb-1 flex items-center gap-2">
+        <span>📖</span> Ficha Técnica Detalhada com Ingredientes
+      </h3>
+      <p class="text-xs text-slate-500 mb-4">Adicione os ingredientes em gramas, ml ou unidades para calcular o CMV exato.</p>
+
+      <form onsubmit="salvarNovaReceitaDetalhada(event)" class="space-y-4 text-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nome da Receita / Produto *</label>
+            <input type="text" id="nova-det-nome" placeholder="Ex: Bolo Red Velvet com Cream Cheese" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Rendimento Base *</label>
+            <input type="text" id="nova-det-rendimento" placeholder="Ex: 1 Bolo Aro 20 (2.2kg)" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+        </div>
+
+        <div class="border border-amber-200 bg-amber-50/40 p-3.5 rounded-xl space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-amber-900 uppercase">Ingredientes da Receita (por grama/unidade)</span>
+            <button type="button" onclick="adicionarLinhaIngredienteReceita()" class="text-xs bg-amber-600 text-white font-semibold px-2.5 py-1 rounded-lg hover:bg-amber-700">
+              + Adicionar Ingrediente
+            </button>
+          </div>
+
+          <div id="container-linhas-ingredientes" class="space-y-2"></div>
+
+          <div class="flex justify-between items-center pt-2 border-t border-amber-200 text-xs">
+            <span class="text-slate-600">Custo Total dos Insumos Calculado:</span>
+            <strong id="label-custo-total-ingredientes" class="text-rose-600 text-sm font-extrabold">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Preço de Venda Sugerido (R$) *</label>
+            <input type="number" step="0.50" id="nova-det-preco" placeholder="0.00" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Modo de Preparo / Observações</label>
+            <input type="text" id="nova-det-modo" placeholder="Ex: Bater ovos 8 min, assar a 180°C por 35m" class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+          <button type="button" onclick="fecharModal('modal-nova-receita-detalhada')" class="px-4 py-2 border rounded-xl text-xs">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">Salvar Ficha Técnica</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVA COMPRA -->
+  <div id="modal-nova-compra" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="fecharModal('modal-nova-compra')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 class="font-bold text-lg text-amber-950 mb-1 flex items-center gap-2">
+        <span>🛒</span> Registrar Compra de Insumo
+      </h3>
+      <p class="text-xs text-slate-500 mb-4">O novo valor unitário/grama atualizará automaticamente as receitas.</p>
+
+      <form onsubmit="salvarNovaCompra(event)" class="space-y-3.5 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Insumo Adquirido *</label>
+          <select id="compra-insumo-id" onchange="atualizarInfoInsumoCompra()" required class="w-full rounded-xl border border-slate-300 p-2.5 bg-white"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Qtd Comprada *</label>
+            <input type="number" step="0.01" id="compra-quantidade" placeholder="Ex: 5" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Unidade da Embalagem</label>
+            <input type="text" id="compra-unidade-label" readonly class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Valor Total Pago (R$) *</label>
+            <input type="number" step="0.01" id="compra-valor-total" placeholder="Ex: 45.00" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Fornecedor / Local</label>
+            <input type="text" id="compra-fornecedor" placeholder="Ex: Atacadão ou Distribuidora" class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+        </div>
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="compra-lancar-caixa" checked class="rounded text-amber-600 focus:ring-amber-500">
+          <label for="compra-lancar-caixa" class="text-xs text-slate-700">Lançar valor imediatamente como saída no Fluxo de Caixa</label>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="fecharModal('modal-nova-compra')" class="px-4 py-2 border rounded-xl text-xs">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">Gravar e Recalcular Receitas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO INSUMO ESTOQUE -->
+  <div id="modal-novo-insumo" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="fecharModal('modal-novo-insumo')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 class="font-bold text-lg text-amber-950 mb-4 flex items-center gap-2">
+        <span>📦</span> Cadastrar Insumo / Estoque
+      </h3>
+      <form onsubmit="salvarNovoInsumo(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome do Insumo *</label>
+          <input type="text" id="novo-insumo-nome" placeholder="Ex: Cacau em Pó 100% Callebaut" required class="w-full rounded-xl border border-slate-300 p-2.5">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Categoria</label>
+          <select id="novo-insumo-categoria" class="w-full rounded-xl border border-slate-300 p-2.5 bg-white">
+            <option>Secos & Farinhas</option>
+            <option>Laticínios & Ovos</option>
+            <option>Chocolates & Coberturas</option>
+            <option>Embalagens & Caixas</option>
+            <option>Frutas & Recheios</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Estoque Inicial</label>
+            <input type="number" step="0.1" id="novo-insumo-qtd" placeholder="Ex: 10" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Unidade Compra</label>
+            <select id="novo-insumo-unidade" class="w-full rounded-xl border border-slate-300 p-2.5 bg-white">
+              <option value="kg">kg (Quilograma)</option>
+              <option value="latas 395g">lata 395g</option>
+              <option value="unidades">unidades</option>
+              <option value="litros">litros</option>
+              <option value="g">gramas (g)</option>
+              <option value="tabletes 200g">tabletes 200g</option>
+              <option value="bandejas">bandejas</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Peso/Qtd em Gramas por Unid.</label>
+            <input type="number" step="1" id="novo-insumo-gramas-unid" placeholder="Ex: 1000 para kg, 395 para lata" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Custo da Embalagem (R$)</label>
+            <input type="number" step="0.01" id="novo-insumo-custo" placeholder="0.00" required class="w-full rounded-xl border border-slate-300 p-2.5">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Estoque Mínimo</label>
+          <input type="number" step="0.1" id="novo-insumo-min" placeholder="Ex: 5" required class="w-full rounded-xl border border-slate-300 p-2.5">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="fecharModal('modal-novo-insumo')" class="px-4 py-2 border rounded-xl text-xs">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">Salvar Insumo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO CLIENTE CRM -->
+  <div id="modal-novo-cliente" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="fecharModal('modal-novo-cliente')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 class="font-bold text-lg text-amber-950 mb-4 flex items-center gap-2">
+        <span>👤</span> Cadastrar Novo Cliente
+      </h3>
+      <form onsubmit="salvarNovoCliente(event)" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo</label>
+          <input type="text" id="novo-cli-nome" placeholder="Ex: Carlos Eduardo Menezes" required class="w-full rounded-xl border border-slate-300 p-2.5">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">WhatsApp / Telefone</label>
+          <input type="tel" id="novo-cli-telefone" placeholder="(11) 98888-0000" required class="w-full rounded-xl border border-slate-300 p-2.5">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Preferências ou Alergias</label>
+          <textarea id="novo-cli-obs" rows="2" placeholder="Ex: Intolerante a lactose; adora bolo de cenoura" class="w-full rounded-xl border border-slate-300 p-2.5"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="fecharModal('modal-novo-cliente')" class="px-4 py-2 border rounded-xl text-xs">Cancelar</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">Cadastrar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVA TRANSAÇÃO -->
+  <div id="modal-nova-transacao" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <button onclick="fecharModal('modal-nova-transacao')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 id="modal-transacao-titulo" class="font-bold text-lg text-amber-950 mb-1 flex items-center gap-2">
+        <span>💰</span> Registrar Transação
+      </h3>
+      <p id="modal-transacao-subtitulo" class="text-xs text-slate-500 mb-4">Preencha os dados do lançamento</p>
+      
+      <form onsubmit="salvarNovaTransacao(event)" class="space-y-4 text-sm">
+        <input type="hidden" id="transacao-tipo" value="despesa">
+
+        <!-- CAMPOS DESPESA -->
+        <div id="campos-transacao-despesa" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Fornecedor / Estabelecimento</label>
+              <input type="text" id="transacao-fornecedor" placeholder="Ex: Atacadão dos Padeiros" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Nº Nota Fiscal / Cupom</label>
+              <input type="text" id="transacao-nf" placeholder="Ex: NF-e 18420" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs font-mono">
+            </div>
+          </div>
+        </div>
+
+        <!-- CAMPOS RECEITA -->
+        <div id="campos-transacao-receita" class="hidden space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Nome do Cliente</label>
+              <input type="text" id="transacao-cliente" list="clientes-datalist" placeholder="Ex: Mariana Alencar" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Nº Pedido / Ref.</label>
+              <input type="text" id="transacao-pedido-id" placeholder="Ex: #104 ou Balcão" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs font-mono">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Forma de Recebimento</label>
+            <select id="transacao-forma-recebimento" class="w-full rounded-xl border border-slate-300 p-2.5 bg-white text-xs font-medium">
+              <option value="Pix">⚡ Pix</option>
+              <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+              <option value="Cartão de Débito">💳 Cartão de Débito</option>
+              <option value="Dinheiro">💵 Dinheiro em Espécie</option>
+              <option value="Transferência">🏦 Transferência Bancária</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Descrição do Lançamento *</label>
+          <input type="text" id="transacao-descricao" placeholder="Ex: Compra de formas ou Pagamento Pedido" required class="w-full rounded-xl border border-slate-300 p-2.5 text-xs">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Valor (R$) *</label>
+            <input type="number" step="0.01" id="transacao-valor" placeholder="0.00" required class="w-full rounded-xl border border-slate-300 p-2.5 text-xs font-bold">
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-semibold text-slate-600">Categoria</label>
+              <button type="button" onclick="abrirModalGerenciarCategorias()" class="text-[11px] text-amber-700 hover:text-amber-900 font-bold hover:underline">
+                ⚙️ Gerenciar
+              </button>
+            </div>
+            <select id="transacao-categoria" class="w-full rounded-xl border border-slate-300 p-2.5 bg-white text-xs"></select>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="fecharModal('modal-nova-transacao')" class="px-4 py-2 border rounded-xl text-xs">Cancelar</button>
+          <button type="submit" id="btn-salvar-transacao" class="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">Lançar no Caixa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: GERENCIAR CATEGORIAS -->
+  <div id="modal-gerenciar-categorias" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-[60] hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="fecharModal('modal-gerenciar-categorias')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+      <h3 class="font-bold text-lg text-amber-950 mb-1 flex items-center gap-2">
+        <span>⚙️</span> Categorias Financeiras
+      </h3>
+      <p class="text-xs text-slate-500 mb-4">Adicione, edite ou remova categorias de receitas e despesas.</p>
+
+      <div class="flex gap-2 p-1 bg-slate-100 rounded-xl mb-4 text-xs font-semibold">
+        <button id="tab-cat-despesa" onclick="mudarTipoGerenciadorCategoria('despesa')" class="flex-1 py-1.5 rounded-lg transition bg-white text-rose-700 shadow-xs font-bold">
+          Despesas (Saídas)
+        </button>
+        <button id="tab-cat-receita" onclick="mudarTipoGerenciadorCategoria('receita')" class="flex-1 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900">
+          Receitas (Entradas)
+        </button>
+      </div>
+
+      <form onsubmit="salvarNovaCategoria(event)" class="flex gap-2 mb-4">
+        <input type="text" id="input-nova-categoria-nome" placeholder="Nova categoria..." required class="flex-1 rounded-xl border border-slate-300 p-2 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition">
+          + Adicionar
+        </button>
+      </form>
+
+      <div class="border border-slate-200 rounded-xl overflow-hidden">
+        <ul id="lista-categorias-gerenciador" class="divide-y divide-slate-100 max-h-56 overflow-y-auto"></ul>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button type="button" onclick="fecharModal('modal-gerenciar-categorias')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition">
+          Concluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ÁREA DE IMPRESSÃO OCULTA -->
+  <div id="print-area" class="hidden p-8 font-mono text-sm max-w-md mx-auto"></div>
+
+  <script>
+    const STORAGE_PREFIX = 'sabore_confeitaria_v1_';
+
+    const storage = {
+      get: function(key) {
+        try {
+          return localStorage.getItem(STORAGE_PREFIX + key);
+        } catch (e) {
+          return null;
+        }
+      },
+      set: function(key, val) {
+        try {
+          localStorage.setItem(STORAGE_PREFIX + key, typeof val === 'string' ? val : JSON.stringify(val));
+        } catch (e) {}
+      }
+    };
+
+    let state = {
+      pedidos: [],
+      receitas: [],
+      estoque: [],
+      compras: [],
+      clientes: [],
+      transacoes: [],
+      categoriasDespesas: [
+        "Insumos / Ingredientes",
+        "Embalagens & Caixas",
+        "Gás, Energia & Água",
+        "Manutenção & Equipamentos",
+        "Aluguel & Custos Fixos",
+        "Marketing & Anúncios",
+        "Outras Despesas"
+      ],
+      categoriasReceitas: [
+        "Vendas Pedidos / Encomendas",
+        "Venda Balcão / Pronta Entrega",
+        "Eventos & Buffets",
+        "Cursos & Consultoria",
+        "Outras Receitas"
+      ]
+    };
+
+    const SEED_DATA = {
+      estoque: [
+        { id: 1, nome: "Farinha de Trigo Especial 00", categoria: "Secos & Farinhas", quantidade: 28.0, unidade: "kg", gramasPorUnidade: 1000, minimo: 15.0, custoUnitario: 6.80 },
+        { id: 2, nome: "Leite Condensado Nestlé", categoria: "Laticínios & Ovos", quantidade: 12.0, unidade: "latas 395g", gramasPorUnidade: 395, minimo: 8.0, custoUnitario: 8.50 },
+        { id: 3, nome: "Chocolate Callebaut Gold 30.4%", categoria: "Chocolates & Coberturas", quantidade: 2.2, unidade: "kg", gramasPorUnidade: 1000, minimo: 2.0, custoUnitario: 145.00 },
+        { id: 4, nome: "Manteiga Extra Sem Sal", categoria: "Laticínios & Ovos", quantidade: 10.0, unidade: "tabletes 200g", gramasPorUnidade: 200, minimo: 5.0, custoUnitario: 13.00 },
+        { id: 5, nome: "Ovos Frescos Médios", categoria: "Laticínios & Ovos", quantidade: 60.0, unidade: "unidades", gramasPorUnidade: 1, minimo: 24.0, custoUnitario: 0.90 },
+        { id: 6, nome: "Açúcar Refinado Especial", categoria: "Secos & Farinhas", quantidade: 20.0, unidade: "kg", gramasPorUnidade: 1000, minimo: 10.0, custoUnitario: 5.20 },
+        { id: 7, nome: "Cacau em Pó 100% Callebaut", categoria: "Chocolates & Coberturas", quantidade: 3.5, unidade: "kg", gramasPorUnidade: 1000, minimo: 1.5, custoUnitario: 88.00 },
+        { id: 8, nome: "Leite em Pó Ninho Integral", categoria: "Laticínios & Ovos", quantidade: 8.0, unidade: "latas 380g", gramasPorUnidade: 380, minimo: 4.0, custoUnitario: 18.50 },
+        { id: 9, nome: "Caixas Kraft Saborê Aro 20", categoria: "Embalagens & Caixas", quantidade: 14.0, unidade: "unidades", gramasPorUnidade: 1, minimo: 10.0, custoUnitario: 8.50 }
+      ],
+      compras: [
+        { id: 1, insumoId: 1, insumoNome: "Farinha de Trigo Especial 00", fornecedor: "Atacadão", quantidade: 20, valorTotal: 136.00, data: obterDataRelativa(4), lancadoCaixa: true },
+        { id: 2, insumoId: 2, insumoNome: "Leite Condensado Nestlé", fornecedor: "Distribuidora Doce Mar", quantidade: 15, valorTotal: 127.50, data: obterDataRelativa(2), lancadoCaixa: true },
+        { id: 3, insumoId: 3, insumoNome: "Chocolate Callebaut Gold 30.4%", fornecedor: "Casa do Padeiro", quantidade: 2, valorTotal: 290.00, data: obterDataRelativa(1), lancadoCaixa: true }
+      ],
+      receitas: [
+        {
+          id: 1,
+          nome: "Massa Pão de Ló Baunilha Suíço (Aro 20)",
+          rendimento: "1 Forma Aro 20 (1.2 kg)",
+          modoPreparo: "Bater ovos com açúcar por 10 min. Adicionar farinha peneirada delicadamente.",
+          precoSugerido: 55.00,
+          ingredientes: [
+            { insumoId: 1, quantidade: 300, unidade: "g" },
+            { insumoId: 5, quantidade: 6, unidade: "un" },
+            { insumoId: 6, quantidade: 250, unidade: "g" },
+            { insumoId: 4, quantidade: 50, unidade: "g" }
+          ]
+        },
+        {
+          id: 2,
+          nome: "Recheio Brigadeiro Ninho Cremoso",
+          rendimento: "600 gramas",
+          modoPreparo: "Misturar em fogo médio até ponto de recheio firme com brilho.",
+          precoSugerido: 65.00,
+          ingredientes: [
+            { insumoId: 2, quantidade: 395, unidade: "g" },
+            { insumoId: 8, quantidade: 100, unidade: "g" },
+            { insumoId: 4, quantidade: 30, unidade: "g" }
+          ]
+        },
+        {
+          id: 3,
+          nome: "Bolo Completo Brigadeiro Belga Saborê (Aro 20)",
+          rendimento: "1 Bolo Aro 20 decorado (2.2kg)",
+          modoPreparo: "Massa chocolate black, recheio belga com gotas e caixa luxo.",
+          precoSugerido: 195.00,
+          ingredientes: [
+            { insumoId: 1, quantidade: 280, unidade: "g" },
+            { insumoId: 7, quantidade: 80, unidade: "g" },
+            { insumoId: 5, quantidade: 5, unidade: "un" },
+            { insumoId: 2, quantidade: 790, unidade: "g" },
+            { insumoId: 3, quantidade: 180, unidade: "g" },
+            { insumoId: 9, quantidade: 1, unidade: "un" }
+          ]
+        }
+      ],
+      pedidos: [
+        {
+          id: 101,
+          clienteNome: "Mariana Alencar",
+          clienteTelefone: "(11) 98721-4490",
+          categoria: "Bolo Festivo",
+          massa: "Baunilha com Pão de Ló",
+          tamanho: "Aro 20 (2,2 kg)",
+          recheio: "Ninho Gourmet com Morangos Frescos",
+          observacoes: "Topo: 'Helena 15 anos' / Flores comestíveis",
+          dataEntrega: obterDataRelativa(0),
+          horaEntrega: "15:30",
+          tipoEnvio: "Retirada no Balcão",
+          valorTotal: 195.00,
+          valorSinal: 100.00,
+          statusPagamento: "Sinal Pago",
+          metodoPagamento: "Pix",
+          statusKDS: "producao",
+          criadoEm: new Date().toISOString()
+        },
+        {
+          id: 102,
+          clienteNome: "Lucas Gusmão",
+          clienteTelefone: "(11) 97123-9988",
+          categoria: "Torta Doce",
+          massa: "Sablée amanteigada crocante",
+          tamanho: "Aro 24 (1,8 kg)",
+          recheio: "Creme de Limão Siciliano c/ Merengue Italiano",
+          observacoes: "Entregar em caixa alta decorada",
+          dataEntrega: obterDataRelativa(0),
+          horaEntrega: "18:00",
+          tipoEnvio: "Entrega Motoboy / Carro",
+          valorTotal: 140.00,
+          valorSinal: 140.00,
+          statusPagamento: "Totalmente Pago",
+          metodoPagamento: "Cartão de Crédito",
+          statusKDS: "fila",
+          criadoEm: new Date().toISOString()
+        },
+        {
+          id: 103,
+          clienteNome: "Beatriz Nogueira",
+          clienteTelefone: "(11) 99345-1212",
+          categoria: "Docinhos Cento",
+          massa: "Brigadeiro Gourmet",
+          tamanho: "100 unidades sortidas",
+          recheio: "50 Pistache c/ chocolate branco + 50 Belga",
+          observacoes: "Forminhas douradas",
+          dataEntrega: obterDataRelativa(1),
+          horaEntrega: "11:00",
+          tipoEnvio: "Retirada no Balcão",
+          valorTotal: 220.00,
+          valorSinal: 0.00,
+          statusPagamento: "Pendente",
+          metodoPagamento: "Pendente",
+          statusKDS: "fila",
+          criadoEm: new Date().toISOString()
+        }
+      ],
+      clientes: [
+        { id: 1, nome: "Mariana Alencar", telefone: "(11) 98721-4490", preferencias: "Pouco açúcar no recheio, prefere morangos frescos", totalPedidos: 4, totalGasto: 780.00 },
+        { id: 2, nome: "Lucas Gusmão", telefone: "(11) 97123-9988", preferencias: "Alérgico a Amendoim e Nozes", totalPedidos: 2, totalGasto: 290.00 },
+        { id: 3, nome: "Beatriz Nogueira", telefone: "(11) 99345-1212", preferencias: "Eventos corporativos, exige pontualidade rigorosa", totalPedidos: 6, totalGasto: 1450.00 }
+      ],
+      transacoes: [
+        { id: 1, tipo: "receita", descricao: "Sinal Pedido #101", cliente: "Mariana Alencar", pedidoId: "#101", formaRecebimento: "Pix", valor: 100.00, categoria: "Vendas Pedidos / Encomendas", data: obterDataRelativa(0) },
+        { id: 2, tipo: "receita", descricao: "Pgto Total Pedido #102", cliente: "Lucas Gusmão", pedidoId: "#102", formaRecebimento: "Cartão de Crédito", valor: 140.00, categoria: "Vendas Pedidos / Encomendas", data: obterDataRelativa(0) },
+        { id: 3, tipo: "despesa", descricao: "Compra Farinhas e Laticínios", fornecedor: "Atacadão", numeroNF: "NF-e 84210", valor: 136.00, categoria: "Insumos / Ingredientes", data: obterDataRelativa(4) },
+        { id: 4, tipo: "despesa", descricao: "Chocolate Callebaut Gold", fornecedor: "Casa do Padeiro", numeroNF: "Cupom 1904", valor: 290.00, categoria: "Insumos / Ingredientes", data: obterDataRelativa(1) }
+      ]
+    };
+
+    function obterDataRelativa(diasAtras = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() - diasAtras);
+      return d.toISOString().split('T')[0];
+    }
+
+    function formatarMoeda(valor) {
+      return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatarDataBR(dataIso) {
+      if (!dataIso) return '--';
+      const partes = dataIso.split('-');
+      if (partes.length !== 3) return dataIso;
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function obterCustoPorGramaOuUnidade(insumo) {
+      if (!insumo || !insumo.custoUnitario) return 0;
+      const gramas = insumo.gramasPorUnidade || 1;
+      return insumo.custoUnitario / gramas;
+    }
+
+    function calcularCustoTotalReceita(receita) {
+      if (!receita.ingredientes || receita.ingredientes.length === 0) {
+        return receita.custoProducao || 0;
+      }
+
+      let total = 0;
+      receita.ingredientes.forEach(ing => {
+        const insumo = state.estoque.find(i => i.id === Number(ing.insumoId));
+        if (insumo) {
+          const custoPorGram = obterCustoPorGramaOuUnidade(insumo);
+          total += (custoPorGram * Number(ing.quantidade));
+        }
+      });
+      return total;
+    }
+
+    function carregarEstado() {
+      try {
+        const p = storage.get('pedidos');
+        const r = storage.get('receitas');
+        const e = storage.get('estoque');
+        const comp = storage.get('compras');
+        const c = storage.get('clientes');
+        const t = storage.get('transacoes');
+        const cd = storage.get('categoriasDespesas');
+        const cr = storage.get('categoriasReceitas');
+
+        if (p && r && e && c && t) {
+          state.pedidos = JSON.parse(p);
+          state.receitas = JSON.parse(r);
+          state.estoque = JSON.parse(e);
+          state.compras = comp ? JSON.parse(comp) : JSON.parse(JSON.stringify(SEED_DATA.compras));
+          state.clientes = JSON.parse(c);
+          state.transacoes = JSON.parse(t);
+          if (cd) state.categoriasDespesas = JSON.parse(cd);
+          if (cr) state.categoriasReceitas = JSON.parse(cr);
+        } else {
+          carregarDadosDemonstracao(false);
+        }
+      } catch (err) {
+        carregarDadosDemonstracao(false);
+      }
+    }
+
+    function salvarEstado(entidade = null) {
+      if (!entidade || entidade === 'pedidos') storage.set('pedidos', state.pedidos);
+      if (!entidade || entidade === 'receitas') storage.set('receitas', state.receitas);
+      if (!entidade || entidade === 'estoque') storage.set('estoque', state.estoque);
+      if (!entidade || entidade === 'compras') storage.set('compras', state.compras);
+      if (!entidade || entidade === 'clientes') storage.set('clientes', state.clientes);
+      if (!entidade || entidade === 'transacoes') storage.set('transacoes', state.transacoes);
+      if (!entidade || entidade === 'categoriasDespesas') storage.set('categoriasDespesas', state.categoriasDespesas);
+      if (!entidade || entidade === 'categoriasReceitas') storage.set('categoriasReceitas', state.categoriasReceitas);
+    }
+
+    function carregarDadosDemonstracao(notificar = false) {
+      state.pedidos = JSON.parse(JSON.stringify(SEED_DATA.pedidos));
+      state.receitas = JSON.parse(JSON.stringify(SEED_DATA.receitas));
+      state.estoque = JSON.parse(JSON.stringify(SEED_DATA.estoque));
+      state.compras = JSON.parse(JSON.stringify(SEED_DATA.compras));
+      state.clientes = JSON.parse(JSON.stringify(SEED_DATA.clientes));
+      state.transacoes = JSON.parse(JSON.stringify(SEED_DATA.transacoes));
+      salvarEstado();
+      atualizarTodaInterface();
+      if (notificar) {
+        exibirToast("Dados da Saborê recarregados com sucesso!", "info");
+      }
+    }
+
+    function exibirToast(mensagem, tipo = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      
+      const toast = document.createElement('div');
+      const cores = {
+        success: 'bg-emerald-800 text-white border-emerald-600',
+        warning: 'bg-amber-800 text-white border-amber-600',
+        danger: 'bg-rose-800 text-white border-rose-600',
+        info: 'bg-slate-900 text-white border-slate-700'
+      };
+
+      const icones = {
+        success: '✅',
+        warning: '⚠️',
+        danger: '🛑',
+        info: '💡'
+      };
+
+      toast.className = `${cores[tipo] || cores.info} border px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto`;
+      toast.innerHTML = `<span>${icones[tipo] || '✨'}</span> <span>${mensagem}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 20);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function alternarAba(abaDestino) {
+      const listaAbas = ['pedido', 'encomendas', 'cozinha', 'fichas', 'custograma', 'compras', 'estoque', 'clientes', 'financeiro'];
+
+      listaAbas.forEach(aba => {
+        const elementoSecao = document.getElementById(`aba-${aba}`);
+        const elementoBotao = document.getElementById(`btn-${aba}`);
+
+        if (elementoSecao && elementoBotao) {
+          if (aba === abaDestino) {
+            elementoSecao.classList.remove('hidden');
+            elementoBotao.className = 'tab-active flex items-center gap-1 px-2.5 py-2 rounded-t-lg transition-all whitespace-nowrap';
+          } else {
+            elementoSecao.classList.add('hidden');
+            elementoBotao.className = 'text-slate-600 hover:text-amber-900 hover:bg-amber-50 flex items-center gap-1 px-2.5 py-2 rounded-lg transition-all whitespace-nowrap';
+          }
+        }
+      });
+
+      if (abaDestino === 'encomendas') renderizarEncomendas();
+      if (abaDestino === 'cozinha') renderizarKDS();
+      if (abaDestino === 'fichas') renderizarFichas();
+      if (abaDestino === 'custograma') renderizarCustoPorGrama();
+      if (abaDestino === 'compras') renderizarCompras();
+      if (abaDestino === 'estoque') renderizarEstoque();
+      if (abaDestino === 'clientes') renderizarClientes();
+      if (abaDestino === 'financeiro') renderizarFinanceiro();
+    }
+
+    function calcularSaldoRestante() {
+      const total = parseFloat(document.getElementById('pedido-valor-total').value) || 0;
+      const sinal = parseFloat(document.getElementById('pedido-valor-sinal').value) || 0;
+      const saldo = Math.max(0, total - sinal);
+      document.getElementById('pedido-saldo-restante').textContent = formatarMoeda(saldo);
+
+      const selectStatus = document.getElementById('pedido-status-pagamento');
+      if (sinal <= 0) {
+        selectStatus.value = "Pendente";
+      } else if (sinal >= total && total > 0) {
+        selectStatus.value = "Totalmente Pago";
+      } else {
+        selectStatus.value = "Sinal Pago";
+      }
+    }
+
+    function preencherReceitaModelo() {
+      document.getElementById('pedido-categoria').value = "Bolo Festivo";
+      document.getElementById('pedido-massa').value = "Cacau Black Intenso 70%";
+      document.getElementById('pedido-tamanho').value = "Aro 20 (2 kg - 20 fatias)";
+      document.getElementById('pedido-recheio').value = "Brigadeiro Gourmet 4 Leites com Morangos";
+      document.getElementById('pedido-observacoes').value = "Topo dourado 'Saborê Especial' + Flores";
+      document.getElementById('pedido-valor-total').value = "210.00";
+      document.getElementById('pedido-valor-sinal').value = "105.00";
+      document.getElementById('pedido-metodo-pagamento').value = "Pix";
+      calcularSaldoRestante();
+      exibirToast("Sugestão Saborê inserida com sucesso!", "info");
+    }
+
+    function atualizarProximoIdPedido() {
+      const proximoId = state.pedidos.length > 0 
+        ? Math.max(...state.pedidos.map(p => p.id)) + 1 
+        : 101;
+      const el = document.getElementById('proximo-numero-pedido');
+      if (el) el.textContent = `#${proximoId}`;
+    }
+
+    function salvarNovoPedido(evento) {
+      evento.preventDefault();
+
+      const nome = document.getElementById('pedido-cliente-nome').value.trim();
+      const telefone = document.getElementById('pedido-cliente-telefone').value.trim();
+      const categoria = document.getElementById('pedido-categoria').value;
+      const massa = document.getElementById('pedido-massa').value.trim();
+      const tamanho = document.getElementById('pedido-tamanho').value.trim();
+      const recheio = document.getElementById('pedido-recheio').value.trim();
+      const observacoes = document.getElementById('pedido-observacoes').value.trim();
+      const dataEntrega = document.getElementById('pedido-data-entrega').value;
+      const horaEntrega = document.getElementById('pedido-hora-entrega').value;
+      const tipoEnvio = document.getElementById('pedido-tipo-envio').value;
+      const total = parseFloat(document.getElementById('pedido-valor-total').value) || 0;
+      const sinal = parseFloat(document.getElementById('pedido-valor-sinal').value) || 0;
+      const statusPagamento = document.getElementById('pedido-status-pagamento').value;
+      const metodoPagamento = document.getElementById('pedido-metodo-pagamento').value;
+
+      const novoId = state.pedidos.length > 0 ? Math.max(...state.pedidos.map(p => p.id)) + 1 : 101;
+
+      const novoPedido = {
+        id: novoId,
+        clienteNome: nome,
+        clienteTelefone: telefone,
+        categoria,
+        massa,
+        tamanho,
+        recheio,
+        observacoes,
+        dataEntrega,
+        horaEntrega,
+        tipoEnvio,
+        valorTotal: total,
+        valorSinal: sinal,
+        statusPagamento,
+        metodoPagamento,
+        statusKDS: 'fila',
+        criadoEm: new Date().toISOString()
+      };
+
+      state.pedidos.unshift(novoPedido);
+      salvarEstado('pedidos');
+
+      let clienteExistente = state.clientes.find(c => c.nome.toLowerCase() === nome.toLowerCase());
+      if (clienteExistente) {
+        clienteExistente.totalPedidos = (clienteExistente.totalPedidos || 0) + 1;
+        clienteExistente.totalGasto = (clienteExistente.totalGasto || 0) + total;
+        clienteExistente.telefone = telefone;
+      } else {
+        state.clientes.unshift({
+          id: Date.now(),
+          nome,
+          telefone,
+          preferencias: observacoes ? `Nota: ${observacoes}` : 'Cliente novo',
+          totalPedidos: 1,
+          totalGasto: total
+        });
+      }
+      salvarEstado('clientes');
+
+      if (sinal > 0) {
+        state.transacoes.unshift({
+          id: Date.now(),
+          tipo: 'receita',
+          descricao: `Sinal Pedido #${novoId} - ${nome}`,
+          cliente: nome,
+          pedidoId: `#${novoId}`,
+          formaRecebimento: metodoPagamento,
+          valor: sinal,
+          categoria: 'Vendas Pedidos / Encomendas',
+          data: obterDataRelativa(0)
+        });
+        salvarEstado('transacoes');
+      }
+
+      document.getElementById('form-pedido').reset();
+      document.getElementById('pedido-saldo-restante').textContent = "R$ 0,00";
+      atualizarProximoIdPedido();
+      atualizarBadges();
+
+      exibirToast(`Pedido #${novoId} registrado! Método de pagamento: ${metodoPagamento}`, "success");
+      visualizarCupomPedido(novoId);
+    }
+
+    function renderizarEncomendas() {
+      const tbody = document.getElementById('tabela-encomendas-corpo');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const termo = (document.getElementById('filtro-encomendas')?.value || '').toLowerCase();
+      const statusFiltro = document.getElementById('filtro-status-encomenda')?.value || 'todos';
+
+      let totalPedidos = state.pedidos.length;
+      let totalPagoAcumulado = 0;
+      let totalPendenteAcumulado = 0;
+
+      state.pedidos.forEach(p => {
+        totalPagoAcumulado += (p.valorSinal || 0);
+        totalPendenteAcumulado += Math.max(0, (p.valorTotal || 0) - (p.valorSinal || 0));
+
+        if (statusFiltro !== 'todos' && p.statusPagamento !== statusFiltro) return;
+        if (termo && !p.clienteNome.toLowerCase().includes(termo) && !p.id.toString().includes(termo) && !p.categoria.toLowerCase().includes(termo)) return;
+
+        const saldoRestante = Math.max(0, p.valorTotal - p.valorSinal);
+        const foneLimpo = p.clienteTelefone.replace(/\D/g, '');
+        const linkWhats = `https://wa.me/55${foneLimpo}?text=${encodeURIComponent(`Olá ${p.clienteNome}! Passando para falar sobre sua encomenda #${p.id} da Saborê - Confeitaria e Panificação Artesanal 🎂`)}`;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-3.5 align-top">
+            <span class="font-mono font-bold bg-amber-100 text-amber-950 px-2 py-0.5 rounded text-xs">#${p.id}</span>
+            <div class="text-[11px] text-slate-400 mt-1">${formatarDataBR(p.criadoEm?.split('T')[0])}</div>
+          </td>
+          <td class="p-3.5 align-top">
+            <span class="font-bold text-slate-900 block">${p.clienteNome}</span>
+            <a href="${linkWhats}" target="_blank" class="text-xs text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1 mt-0.5">
+              <span>💬</span> ${p.clienteTelefone}
+            </a>
+          </td>
+          <td class="p-3.5 align-top">
+            <span class="font-semibold text-amber-950 text-xs">${p.categoria}</span>
+            <div class="text-xs text-slate-600">${p.tamanho} • ${p.massa}</div>
+            ${p.recheio ? `<div class="text-[11px] text-slate-500 italic mt-0.5">Recheio: ${p.recheio}</div>` : ''}
+            ${p.observacoes ? `<div class="text-[11px] bg-amber-50 text-amber-800 p-1 rounded mt-1 border border-amber-200/60">${p.observacoes}</div>` : ''}
+          </td>
+          <td class="p-3.5 align-top text-xs">
+            <span class="font-bold text-rose-700 block">${formatarDataBR(p.dataEntrega)} às ${p.horaEntrega}</span>
+            <span class="text-slate-500 text-[11px]">${p.tipoEnvio}</span>
+          </td>
+          <td class="p-3.5 align-top text-xs">
+            <div>Total: <strong class="text-slate-900">${formatarMoeda(p.valorTotal)}</strong></div>
+            <div class="text-emerald-700">Pago: <strong>${formatarMoeda(p.valorSinal)}</strong></div>
+            <div class="${saldoRestante > 0 ? 'text-rose-600' : 'text-slate-400'} font-bold">
+              Restante: ${formatarMoeda(saldoRestante)}
+            </div>
+          </td>
+          <td class="p-3.5 align-top">
+            <div class="space-y-1">
+              <span class="inline-block text-[11px] px-2 py-0.5 rounded-md font-bold ${
+                p.statusPagamento === 'Totalmente Pago' ? 'bg-emerald-100 text-emerald-800' :
+                p.statusPagamento === 'Sinal Pago' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
+              }">
+                ${p.statusPagamento}
+              </span>
+              <div class="text-xs text-slate-700 font-semibold flex items-center gap-1">
+                <span>💳</span> ${p.metodoPagamento || 'A definir'}
+              </div>
+            </div>
+          </td>
+          <td class="p-3.5 align-top text-right">
+            <div class="flex flex-col items-end gap-1.5">
+              <button onclick="abrirModalEditarPagamento(${p.id})" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold px-2.5 py-1 rounded-lg transition">
+                ✏️ Atualizar Pgto
+              </button>
+              <button onclick="visualizarCupomPedido(${p.id})" class="text-[11px] text-slate-600 hover:underline">
+                Ver Cupom
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('encomendas-stat-total').textContent = totalPedidos;
+      document.getElementById('encomendas-stat-pago').textContent = formatarMoeda(totalPagoAcumulado);
+      document.getElementById('encomendas-stat-pendente').textContent = formatarMoeda(totalPendenteAcumulado);
+    }
+
+    function abrirModalEditarPagamento(pedidoId) {
+      const p = state.pedidos.find(item => item.id === pedidoId);
+      if (!p) return;
+
+      document.getElementById('edit-pgto-id').value = p.id;
+      document.getElementById('modal-pgto-subtitulo').textContent = `Pedido #${p.id} - ${p.clienteNome}`;
+      document.getElementById('edit-pgto-status').value = p.statusPagamento;
+      document.getElementById('edit-pgto-sinal').value = p.valorSinal || 0;
+      document.getElementById('edit-pgto-metodo').value = p.metodoPagamento || 'Pix';
+      document.getElementById('modal-pgto-total').textContent = formatarMoeda(p.valorTotal);
+
+      const saldoRestante = Math.max(0, p.valorTotal - p.valorSinal);
+      document.getElementById('modal-pgto-restante').textContent = formatarMoeda(saldoRestante);
+
+      abrirModal('modal-editar-pagamento');
+    }
+
+    function salvarEdicaoPagamento(e) {
+      e.preventDefault();
+      const id = Number(document.getElementById('edit-pgto-id').value);
+      const novoStatus = document.getElementById('edit-pgto-status').value;
+      const novoValorPago = parseFloat(document.getElementById('edit-pgto-sinal').value) || 0;
+      const novoMetodo = document.getElementById('edit-pgto-metodo').value;
+
+      const pedido = state.pedidos.find(p => p.id === id);
+      if (pedido) {
+        const diferenca = novoValorPago - (pedido.valorSinal || 0);
+
+        pedido.statusPagamento = novoStatus;
+        pedido.valorSinal = novoValorPago;
+        pedido.metodoPagamento = novoMetodo;
+
+        if (diferenca > 0) {
+          state.transacoes.unshift({
+            id: Date.now(),
+            tipo: 'receita',
+            descricao: `Recebimento Pedido #${pedido.id} - ${pedido.clienteNome}`,
+            cliente: pedido.clienteNome,
+            pedidoId: `#${pedido.id}`,
+            formaRecebimento: novoMetodo,
+            valor: diferenca,
+            categoria: 'Vendas Pedidos / Encomendas',
+            data: obterDataRelativa(0)
+          });
+          salvarEstado('transacoes');
+        }
+
+        salvarEstado('pedidos');
+        renderizarEncomendas();
+        renderizarFinanceiro();
+        fecharModal('modal-editar-pagamento');
+        exibirToast(`Pagamento do Pedido #${id} atualizado (${novoMetodo})!`, 'success');
+      }
+    }
+
+    function renderizarFichas() {
+      const container = document.getElementById('cards-receitas-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (state.receitas.length === 0) {
+        container.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-400">Nenhuma ficha técnica cadastrada.</div>`;
+        return;
+      }
+
+      state.receitas.forEach(rec => {
+        const custoCalculado = calcularCustoTotalReceita(rec);
+        const margemBruta = rec.precoSugerido > 0 
+          ? (((rec.precoSugerido - custoCalculado) / rec.precoSugerido) * 100).toFixed(0) 
+          : 0;
+
+        let htmlIngredientes = '';
+        if (rec.ingredientes && rec.ingredientes.length > 0) {
+          htmlIngredientes = rec.ingredientes.map(ing => {
+            const insumo = state.estoque.find(i => i.id === Number(ing.insumoId));
+            const nomeInsumo = insumo ? insumo.nome : 'Insumo não encontrado';
+            const custoGrama = insumo ? obterCustoPorGramaOuUnidade(insumo) : 0;
+            const subtotal = custoGrama * Number(ing.quantidade);
+
+            return `
+              <li class="flex justify-between items-center text-xs py-1 border-b border-dashed border-slate-100">
+                <span class="text-slate-700 font-medium">${nomeInsumo}</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-slate-500">${ing.quantidade} ${ing.unidade || 'g'}</span>
+                  <span class="font-mono text-slate-700 font-semibold">${formatarMoeda(subtotal)}</span>
+                </div>
+              </li>
+            `;
+          }).join('');
+        } else {
+          htmlIngredientes = `<li class="text-xs text-slate-400 italic py-1">Receita padrão (sem detalhamento individual de insumos).</li>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-5 shadow-xs border border-amber-100 flex flex-col justify-between hover:shadow-md transition-all";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <h3 class="font-bold text-base text-slate-900 leading-snug">${rec.nome}</h3>
+                <p class="text-xs text-amber-900 font-medium mt-0.5">🥣 Rendimento: ${rec.rendimento}</p>
+              </div>
+              <span class="px-2 py-0.5 rounded text-xs font-bold ${margemBruta >= 60 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${margemBruta}% margem
+              </span>
+            </div>
+
+            <div class="mt-4 bg-amber-50/30 rounded-xl p-3 border border-amber-100/70">
+              <div class="text-[11px] font-bold text-amber-900 uppercase tracking-wider mb-2 flex justify-between">
+                <span>Ingredientes & Dosagem</span>
+                <span>Subtotal CMV</span>
+              </div>
+              <ul class="space-y-0.5">
+                ${htmlIngredientes}
+              </ul>
+            </div>
+
+            ${rec.modoPreparo ? `<p class="text-xs text-slate-500 italic mt-3 bg-slate-50 p-2 rounded-lg"><strong>Preparo:</strong> ${rec.modoPreparo}</p>` : ''}
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] text-slate-400 block">Custo CMV Atual</span>
+              <strong class="text-base text-rose-600 font-bold">${formatarMoeda(custoCalculado)}</strong>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] text-slate-400 block">Preço Sugerido</span>
+              <strong class="text-base text-emerald-700 font-bold">${formatarMoeda(rec.precoSugerido)}</strong>
+            </div>
+            <button onclick="excluirReceita(${rec.id})" class="text-xs text-slate-400 hover:text-rose-600 p-1 font-semibold" title="Excluir receita">
+              🗑️
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function abrirModalNovaReceitaDetalhada() {
+      const container = document.getElementById('container-linhas-ingredientes');
+      container.innerHTML = '';
+      adicionarLinhaIngredienteReceita();
+      adicionarLinhaIngredienteReceita();
+      recalcularCustoFormularioReceita();
+      abrirModal('modal-nova-receita-detalhada');
+    }
+
+    function adicionarLinhaIngredienteReceita() {
+      const container = document.getElementById('container-linhas-ingredientes');
+      const linhaId = Date.now() + Math.random().toString(36).substr(2, 4);
+
+      let optionsInsumos = state.estoque.map(ins => {
+        return `<option value="${ins.id}">${ins.nome} (${formatarMoeda(obterCustoPorGramaOuUnidade(ins))}/g)</option>`;
+      }).join('');
+
+      const div = document.createElement('div');
+      div.className = "flex items-center gap-2 linha-ingrediente";
+      div.id = `linha-${linhaId}`;
+      div.innerHTML = `
+        <select class="flex-1 rounded-lg border border-slate-300 p-2 text-xs bg-white ing-select" onchange="recalcularCustoFormularioReceita()">
+          ${optionsInsumos}
+        </select>
+        <input type="number" step="1" placeholder="Qtd" value="100" class="w-20 rounded-lg border border-slate-300 p-2 text-xs ing-qtd" oninput="recalcularCustoFormularioReceita()">
+        <select class="w-16 rounded-lg border border-slate-300 p-2 text-xs bg-white ing-unit">
+          <option value="g">g</option>
+          <option value="ml">ml</option>
+          <option value="un">un</option>
+        </select>
+        <button type="button" onclick="removerLinhaIngrediente('${linhaId}')" class="text-rose-500 hover:text-rose-700 text-sm font-bold px-1">✕</button>
+      `;
+      container.appendChild(div);
+      recalcularCustoFormularioReceita();
+    }
+
+    function removerLinhaIngrediente(linhaId) {
+      const el = document.getElementById(`linha-${linhaId}`);
+      if (el) el.remove();
+      recalcularCustoFormularioReceita();
+    }
+
+    function recalcularCustoFormularioReceita() {
+      const linhas = document.querySelectorAll('.linha-ingrediente');
+      let total = 0;
+
+      linhas.forEach(linha => {
+        const select = linha.querySelector('.ing-select');
+        const inputQtd = linha.querySelector('.ing-qtd');
+        const insumoId = Number(select?.value);
+        const qtd = parseFloat(inputQtd?.value) || 0;
+
+        const insumo = state.estoque.find(i => i.id === insumoId);
+        if (insumo) {
+          const custoGrama = obterCustoPorGramaOuUnidade(insumo);
+          total += (custoGrama * qtd);
+        }
+      });
+
+      const label = document.getElementById('label-custo-total-ingredientes');
+      if (label) label.textContent = formatarMoeda(total);
+      return total;
+    }
+
+    function salvarNovaReceitaDetalhada(e) {
+      e.preventDefault();
+      const nome = document.getElementById('nova-det-nome').value.trim();
+      const rendimento = document.getElementById('nova-det-rendimento').value.trim();
+      const preco = parseFloat(document.getElementById('nova-det-preco').value) || 0;
+      const modo = document.getElementById('nova-det-modo').value.trim();
+
+      const ingredientes = [];
+      document.querySelectorAll('.linha-ingrediente').forEach(linha => {
+        const insumoId = Number(linha.querySelector('.ing-select')?.value);
+        const quantidade = parseFloat(linha.querySelector('.ing-qtd')?.value) || 0;
+        const unidade = linha.querySelector('.ing-unit')?.value || 'g';
+        if (insumoId && quantidade > 0) {
+          ingredientes.push({ insumoId, quantidade, unidade });
+        }
+      });
+
+      const novaReceita = {
+        id: Date.now(),
+        nome,
+        rendimento,
+        precoSugerido: preco,
+        modoPreparo: modo,
+        ingredientes
+      };
+
+      state.receitas.push(novaReceita);
+      salvarEstado('receitas');
+      renderizarFichas();
+      fecharModal('modal-nova-receita-detalhada');
+      e.target.reset();
+      exibirToast(`Ficha técnica '${nome}' criada com sucesso!`, 'success');
+    }
+
+    function excluirReceita(id) {
+      state.receitas = state.receitas.filter(r => r.id !== id);
+      salvarEstado('receitas');
+      renderizarFichas();
+      exibirToast("Receita removida.", "info");
+    }
+
+    function renderizarCustoPorGrama() {
+      const tbody = document.getElementById('tabela-custograma-corpo');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const termo = (document.getElementById('filtro-custograma')?.value || '').toLowerCase();
+
+      state.estoque.forEach(insumo => {
+        if (termo && !insumo.nome.toLowerCase().includes(termo) && !insumo.categoria.toLowerCase().includes(termo)) {
+          return;
+        }
+
+        const custoPorGrama = obterCustoPorGramaOuUnidade(insumo);
+        const custo100g = custoPorGrama * 100;
+        const isUnidade = insumo.unidade.includes('unidade');
+
+        const usoContagem = state.receitas.filter(r => 
+          r.ingredientes && r.ingredientes.some(ing => Number(ing.insumoId) === insumo.id)
+        ).length;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold text-slate-800">${insumo.nome}</td>
+          <td class="p-3.5 text-xs text-slate-500">${insumo.categoria}</td>
+          <td class="p-3.5 text-xs text-slate-700 font-medium">1 ${insumo.unidade} (${insumo.gramasPorUnidade}g)</td>
+          <td class="p-3.5 text-slate-700 font-semibold">${formatarMoeda(insumo.custoUnitario)}</td>
+          <td class="p-3.5 font-mono font-bold text-amber-900 bg-amber-50/60 text-xs">
+            ${isUnidade ? formatarMoeda(custoPorGrama) + ' / un' : 'R$ ' + custoPorGrama.toFixed(4) + ' / g'}
+          </td>
+          <td class="p-3.5 text-xs text-slate-600 font-medium">
+            ${isUnidade ? '--' : formatarMoeda(custo100g) + ' por 100g'}
+          </td>
+          <td class="p-3.5 text-right text-xs font-bold text-amber-700">
+            ${usoContagem} receita(s)
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderizarCompras() {
+      const tbody = document.getElementById('tabela-compras-corpo');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      state.compras.forEach(compra => {
+        const insumo = state.estoque.find(i => i.id === compra.insumoId);
+        const custoPorGrama = insumo ? obterCustoPorGramaOuUnidade(insumo) : 0;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-3.5 text-slate-600 text-xs font-mono">${formatarDataBR(compra.data)}</td>
+          <td class="p-3.5 font-medium text-slate-800 text-xs">${compra.fornecedor || 'Diversos'}</td>
+          <td class="p-3.5 font-bold text-slate-900">${compra.insumoNome}</td>
+          <td class="p-3.5 text-slate-700 text-xs">${compra.quantidade} un/emb</td>
+          <td class="p-3.5 font-bold text-rose-600">${formatarMoeda(compra.valorTotal)}</td>
+          <td class="p-3.5 text-xs font-mono text-emerald-800 font-bold bg-emerald-50/40">
+            ${formatarMoeda(compra.valorTotal / (compra.quantidade || 1))} / emb
+            <span class="block text-[10px] text-slate-500 font-normal">R$ ${custoPorGrama.toFixed(4)}/g</span>
+          </td>
+          <td class="p-3.5 text-right">
+            <span class="text-xs px-2 py-0.5 rounded font-semibold ${compra.lancadoCaixa ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
+              ${compra.lancadoCaixa ? '✅ Lançado' : 'Não'}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function abrirModalNovaCompra() {
+      const select = document.getElementById('compra-insumo-id');
+      select.innerHTML = state.estoque.map(i => `<option value="${i.id}">${i.nome}</option>`).join('');
+      atualizarInfoInsumoCompra();
+      abrirModal('modal-nova-compra');
+    }
+
+    function atualizarInfoInsumoCompra() {
+      const insumoId = Number(document.getElementById('compra-insumo-id').value);
+      const insumo = state.estoque.find(i => i.id === insumoId);
+      const label = document.getElementById('compra-unidade-label');
+      if (insumo && label) {
+        label.value = insumo.unidade;
+      }
+    }
+
+    function salvarNovaCompra(e) {
+      e.preventDefault();
+      const insumoId = Number(document.getElementById('compra-insumo-id').value);
+      const qtdComprada = parseFloat(document.getElementById('compra-quantidade').value) || 0;
+      const valorTotal = parseFloat(document.getElementById('compra-valor-total').value) || 0;
+      const fornecedor = document.getElementById('compra-fornecedor').value.trim();
+      const lancarCaixa = document.getElementById('compra-lancar-caixa').checked;
+
+      const insumo = state.estoque.find(i => i.id === insumoId);
+      if (!insumo) return;
+
+      const novoCustoUnitarioEmbalagem = valorTotal / qtdComprada;
+      insumo.custoUnitario = Math.round(novoCustoUnitarioEmbalagem * 100) / 100;
+      insumo.quantidade = Math.round((insumo.quantidade + qtdComprada) * 10) / 10;
+
+      state.compras.unshift({
+        id: Date.now(),
+        insumoId,
+        insumoNome: insumo.nome,
+        fornecedor,
+        quantidade: qtdComprada,
+        valorTotal,
+        data: obterDataRelativa(0),
+        lancadoCaixa
+      });
+
+      if (lancarCaixa) {
+        state.transacoes.unshift({
+          id: Date.now(),
+          tipo: 'despesa',
+          descricao: `Compra Insumo: ${insumo.nome}`,
+          fornecedor: fornecedor || 'Fornecedor Diversos',
+          numeroNF: '',
+          valor: valorTotal,
+          categoria: 'Insumos / Ingredientes',
+          data: obterDataRelativa(0)
+        });
+        salvarEstado('transacoes');
+      }
+
+      salvarEstado('estoque');
+      salvarEstado('compras');
+
+      renderizarFichas();
+      renderizarCustoPorGrama();
+      renderizarCompras();
+      renderizarEstoque();
+      renderizarFinanceiro();
+      fecharModal('modal-nova-compra');
+      e.target.reset();
+
+      exibirToast(`Compra registrada! Custo de '${insumo.nome}' atualizado e receitas recalculadas!`, 'success');
+    }
+
+    function renderizarKDS() {
+      const colFila = document.getElementById('kds-coluna-fila');
+      const colProducao = document.getElementById('kds-coluna-producao');
+      const colPronto = document.getElementById('kds-coluna-pronto');
+
+      if (!colFila || !colProducao || !colPronto) return;
+
+      colFila.innerHTML = '';
+      colProducao.innerHTML = '';
+      colPronto.innerHTML = '';
+
+      const pedidosFila = state.pedidos.filter(p => p.statusKDS === 'fila');
+      const pedidosProducao = state.pedidos.filter(p => p.statusKDS === 'producao');
+      const pedidosPronto = state.pedidos.filter(p => p.statusKDS === 'pronto');
+
+      document.getElementById('contador-fila').textContent = pedidosFila.length;
+      document.getElementById('contador-producao').textContent = pedidosProducao.length;
+      document.getElementById('contador-pronto').textContent = pedidosPronto.length;
+
+      if (pedidosFila.length === 0) {
+        colFila.innerHTML = `<div class="text-center py-10 text-xs text-slate-400 font-medium">Nenhum pedido aguardando na fila.</div>`;
+      } else {
+        pedidosFila.forEach(p => colFila.appendChild(criarCardKDS(p, 'fila')));
+      }
+
+      if (pedidosProducao.length === 0) {
+        colProducao.innerHTML = `<div class="text-center py-10 text-xs text-amber-700/60 font-medium">Nenhum item em montagem no momento.</div>`;
+      } else {
+        pedidosProducao.forEach(p => colProducao.appendChild(criarCardKDS(p, 'producao')));
+      }
+
+      if (pedidosPronto.length === 0) {
+        colPronto.innerHTML = `<div class="text-center py-10 text-emerald-800/60 font-medium">Nenhum item pronto aguardando retirada.</div>`;
+      } else {
+        pedidosPronto.forEach(p => colPronto.appendChild(criarCardKDS(p, 'pronto')));
+      }
+
+      atualizarBadges();
+    }
+
+    function criarCardKDS(pedido, coluna) {
+      const card = document.createElement('article');
+      card.className = "bg-white p-4 rounded-xl shadow-xs border border-slate-200 transition-all hover:shadow-md space-y-3";
+
+      const hoje = obterDataRelativa(0);
+      const isHoje = pedido.dataEntrega === hoje;
+
+      let botoesAcao = '';
+      if (coluna === 'fila') {
+        botoesAcao = `
+          <button onclick="moverPedidoKDS(${pedido.id}, 'producao')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs py-2 rounded-lg transition shadow-xs flex items-center justify-center gap-1">
+            <span>🥣 Iniciar Preparo ➔</span>
+          </button>
+        `;
+      } else if (coluna === 'producao') {
+        botoesAcao = `
+          <div class="flex gap-2">
+            <button onclick="moverPedidoKDS(${pedido.id}, 'fila')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg" title="Voltar para fila">↩</button>
+            <button onclick="moverPedidoKDS(${pedido.id}, 'pronto')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2 rounded-lg transition shadow-xs flex items-center justify-center gap-1">
+              <span>Finalizar & Embalar ✔️</span>
+            </button>
+          </div>
+        `;
+      } else if (coluna === 'pronto') {
+        botoesAcao = `
+          <div class="flex gap-2">
+            <button onclick="moverPedidoKDS(${pedido.id}, 'producao')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg" title="Voltar para montagem">↩</button>
+            <button onclick="concluirEntregaPedido(${pedido.id})" class="flex-1 bg-slate-900 hover:bg-black text-white font-semibold text-xs py-2 rounded-lg transition flex items-center justify-center gap-1">
+              <span>Marcar Entregue 🎉</span>
+            </button>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold font-mono bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">#${pedido.id}</span>
+            <span class="text-xs font-medium text-slate-500">${pedido.categoria}</span>
+          </div>
+          ${isHoje ? '<span class="text-[10px] font-bold tracking-wider uppercase bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded animate-pulse">Hoje</span>' : `<span class="text-[10px] text-slate-500 font-medium">${formatarDataBR(pedido.dataEntrega)}</span>`}
+        </div>
+
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm leading-snug">${pedido.clienteNome}</h3>
+          <p class="text-xs text-amber-900 font-semibold mt-0.5">📐 ${pedido.tamanho} • ${pedido.massa}</p>
+          ${pedido.recheio ? `<p class="text-xs text-slate-600 mt-0.5"><strong>Recheio:</strong> ${pedido.recheio}</p>` : ''}
+          ${pedido.observacoes ? `<div class="mt-2 text-xs bg-amber-50/80 border-l-2 border-amber-500 p-1.5 text-amber-900 italic">${pedido.observacoes}</div>` : ''}
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <span>🕒 <strong>${pedido.horaEntrega}</strong> (${pedido.tipoEnvio.split(' ')[0]})</span>
+          <button onclick="visualizarCupomPedido(${pedido.id})" class="text-amber-700 hover:underline font-semibold">Ver Cupom</button>
+        </div>
+
+        <div class="pt-1">
+          ${botoesAcao}
+        </div>
+      `;
+
+      return card;
+    }
+
+    function moverPedidoKDS(pedidoId, novaColuna) {
+      const pedido = state.pedidos.find(p => p.id === pedidoId);
+      if (pedido) {
+        pedido.statusKDS = novaColuna;
+        salvarEstado('pedidos');
+        renderizarKDS();
+        exibirToast(`Pedido #${pedidoId} atualizado no KDS!`, 'info');
+      }
+    }
+
+    function concluirEntregaPedido(pedidoId) {
+      const pedido = state.pedidos.find(p => p.id === pedidoId);
+      if (pedido) {
+        const saldoRestante = Math.max(0, pedido.valorTotal - pedido.valorSinal);
+        if (saldoRestante > 0 && pedido.statusPagamento !== 'Totalmente Pago') {
+          state.transacoes.unshift({
+            id: Date.now(),
+            tipo: 'receita',
+            descricao: `Quitação Entrega Pedido #${pedido.id} - ${pedido.clienteNome}`,
+            cliente: pedido.clienteNome,
+            pedidoId: `#${pedido.id}`,
+            formaRecebimento: pedido.metodoPagamento || 'Pix',
+            valor: saldoRestante,
+            categoria: 'Vendas Pedidos / Encomendas',
+            data: obterDataRelativa(0)
+          });
+          pedido.valorSinal = pedido.valorTotal;
+          pedido.statusPagamento = 'Totalmente Pago';
+          salvarEstado('transacoes');
+        }
+
+        pedido.statusKDS = 'entregue';
+        salvarEstado('pedidos');
+        renderizarKDS();
+        renderizarEncomendas();
+        exibirToast(`Pedido #${pedidoId} entregue e finalizado com sucesso!`, 'success');
+      }
+    }
+
+    function visualizarCupomPedido(pedidoId) {
+      const pedido = state.pedidos.find(p => p.id === pedidoId);
+      if (!pedido) return;
+
+      const container = document.getElementById('conteudo-cupom-pedido');
+      const saldoRestante = Math.max(0, pedido.valorTotal - pedido.valorSinal);
+
+      container.innerHTML = `
+        <div class="text-center pb-4 border-b border-dashed border-slate-300">
+          <div class="text-3xl">🥖</div>
+          <h2 class="font-bold text-lg text-amber-950 mt-1">SABORÊ - CONFEITARIA E PANIFICAÇÃO ARTESANAL</h2>
+          <p class="text-xs text-slate-500">Ordem de Produção & Cupom de Balcão</p>
+          <div class="inline-block bg-slate-900 text-white font-mono text-sm px-3 py-1 rounded-md mt-2 font-bold">
+            PEDIDO #${pedido.id}
+          </div>
+        </div>
+
+        <div class="py-4 space-y-2 text-xs border-b border-dashed border-slate-300">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Cliente:</span>
+            <span class="font-bold text-slate-800">${pedido.clienteNome}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Telefone:</span>
+            <span class="font-medium text-slate-800">${pedido.clienteTelefone}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Data / Horário de Entrega:</span>
+            <span class="font-bold text-rose-700">${formatarDataBR(pedido.dataEntrega)} às ${pedido.horaEntrega}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Modalidade:</span>
+            <span class="font-medium text-slate-800">${pedido.tipoEnvio}</span>
+          </div>
+        </div>
+
+        <div class="py-4 space-y-2 text-xs border-b border-dashed border-slate-300">
+          <p class="font-bold text-amber-950 uppercase">Detalhes da Produção:</p>
+          <div class="bg-amber-50/60 p-2.5 rounded-lg border border-amber-200/60 space-y-1">
+            <p><strong>Item:</strong> ${pedido.categoria} (${pedido.tamanho})</p>
+            <p><strong>Massa Base:</strong> ${pedido.massa}</p>
+            <p><strong>Recheios:</strong> ${pedido.recheio || 'Padrão'}</p>
+            ${pedido.observacoes ? `<p class="text-amber-900"><strong>Topo / Personalização:</strong> ${pedido.observacoes}</p>` : ''}
+          </div>
+        </div>
+
+        <div class="py-4 space-y-1.5 text-xs">
+          <div class="flex justify-between text-slate-600">
+            <span>Valor Total:</span>
+            <span class="font-semibold text-slate-800">${formatarMoeda(pedido.valorTotal)}</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Sinal Adiantado:</span>
+            <span class="font-semibold text-emerald-700">${formatarMoeda(pedido.valorSinal)}</span>
+          </div>
+          <div class="flex justify-between text-sm font-bold pt-1 border-t border-slate-200">
+            <span>Saldo a Receber:</span>
+            <span class="${saldoRestante > 0 ? 'text-rose-600' : 'text-emerald-700'}">${formatarMoeda(saldoRestante)}</span>
+          </div>
+          <div class="text-[11px] text-slate-500 text-center pt-2">
+            Status: <strong>${pedido.statusPagamento}</strong> • Método: <strong>${pedido.metodoPagamento || 'A definir'}</strong>
+          </div>
+        </div>
+      `;
+
+      abrirModal('modal-pedido-detalhe');
+    }
+
+    function imprimirCupomAtual() {
+      const conteudo = document.getElementById('conteudo-cupom-pedido').innerHTML;
+      const printArea = document.getElementById('print-area');
+      printArea.innerHTML = conteudo;
+      window.print();
+    }
+
+    function renderizarEstoque() {
+      const tbody = document.getElementById('tabela-estoque-corpo');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let criticos = 0;
+      let regular = 0;
+      let valorTotal = 0;
+
+      const termoFiltro = (document.getElementById('filtro-estoque')?.value || '').toLowerCase();
+
+      state.estoque.forEach(item => {
+        const isCritico = item.quantidade <= item.minimo;
+        if (isCritico) criticos++; else regular++;
+        valorTotal += (item.quantidade * item.custoUnitario);
+
+        if (termoFiltro && !item.nome.toLowerCase().includes(termoFiltro) && !item.categoria.toLowerCase().includes(termoFiltro)) {
+          return;
+        }
+
+        const custoPorGrama = obterCustoPorGramaOuUnidade(item);
+
+        const tr = document.createElement('tr');
+        tr.className = `hover:bg-amber-50/40 transition-colors ${isCritico ? 'bg-rose-50/30' : ''}`;
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-slate-800">
+            ${item.nome}
+            ${isCritico ? '<span class="ml-2 text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">Comprar Urgente</span>' : ''}
+          </td>
+          <td class="p-4 text-slate-500 text-xs">${item.categoria}</td>
+          <td class="p-4 font-bold ${isCritico ? 'text-rose-600' : 'text-slate-800'}">
+            ${item.quantidade} ${item.unidade}
+          </td>
+          <td class="p-4 text-slate-500">${item.minimo} ${item.unidade}</td>
+          <td class="p-4 text-slate-700">${formatarMoeda(item.custoUnitario)}</td>
+          <td class="p-4 font-mono text-xs text-amber-900 font-semibold bg-amber-50/50">
+            ${item.unidade.includes('unidade') ? formatarMoeda(custoPorGrama) + '/un' : 'R$ ' + custoPorGrama.toFixed(4) + '/g'}
+          </td>
+          <td class="p-4">
+            <span class="text-xs px-2.5 py-1 rounded-full font-bold ${isCritico ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+              ${isCritico ? 'Baixo' : 'Normal'}
+            </span>
+          </td>
+          <td class="p-4 text-right">
+            <div class="inline-flex items-center gap-1">
+              <button onclick="ajustarEstoqueRapido(${item.id}, -1)" class="w-7 h-7 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg text-xs" title="Reduzir 1">-</button>
+              <button onclick="ajustarEstoqueRapido(${item.id}, 1)" class="w-7 h-7 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-lg text-xs" title="Adicionar 1">+</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('stat-estoque-total').textContent = state.estoque.length;
+      document.getElementById('stat-estoque-critico').textContent = criticos;
+      document.getElementById('stat-estoque-regular').textContent = regular;
+      document.getElementById('stat-estoque-valor').textContent = formatarMoeda(valorTotal);
+
+      const badgeStock = document.getElementById('badge-stock-alert');
+      if (badgeStock) {
+        if (criticos > 0) badgeStock.classList.remove('hidden'); 
+        else badgeStock.classList.add('hidden');
+      }
+    }
+
+    function ajustarEstoqueRapido(id, delta) {
+      const item = state.estoque.find(i => i.id === id);
+      if (item) {
+        item.quantidade = Math.max(0, Math.round((item.quantidade + delta) * 10) / 10);
+        salvarEstado('estoque');
+        renderizarEstoque();
+        exibirToast(`Estoque de '${item.nome}' atualizado!`, 'info');
+      }
+    }
+
+    function filtrarEstoque() {
+      renderizarEstoque();
+    }
+
+    function salvarNovoInsumo(e) {
+      e.preventDefault();
+      const nome = document.getElementById('novo-insumo-nome').value.trim();
+      const categoria = document.getElementById('novo-insumo-categoria').value;
+      const qtd = parseFloat(document.getElementById('novo-insumo-qtd').value) || 0;
+      const unidade = document.getElementById('novo-insumo-unidade').value;
+      const gramasPorUnidade = parseFloat(document.getElementById('novo-insumo-gramas-unid').value) || 1000;
+      const min = parseFloat(document.getElementById('novo-insumo-min').value) || 0;
+      const custo = parseFloat(document.getElementById('novo-insumo-custo').value) || 0;
+
+      state.estoque.push({
+        id: Date.now(),
+        nome,
+        categoria,
+        quantidade: qtd,
+        unidade,
+        gramasPorUnidade,
+        minimo: min,
+        custoUnitario: custo
+      });
+
+      salvarEstado('estoque');
+      renderizarEstoque();
+      renderizarCustoPorGrama();
+      fecharModal('modal-novo-insumo');
+      e.target.reset();
+      exibirToast(`Insumo '${nome}' cadastrado com sucesso!`, 'success');
+    }
+
+    function renderizarClientes() {
+      const tbody = document.getElementById('tabela-clientes-corpo');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const termo = (document.getElementById('filtro-cliente')?.value || '').toLowerCase();
+
+      state.clientes.forEach(cli => {
+        if (termo && !cli.nome.toLowerCase().includes(termo) && !cli.telefone.includes(termo)) {
+          return;
+        }
+
+        const foneLimpo = cli.telefone.replace(/\D/g, '');
+        const linkWhats = `https://wa.me/55${foneLimpo}?text=${encodeURIComponent(`Olá ${cli.nome}! Aqui é da Saborê - Confeitaria e Panificação Artesanal 🎂`)}`;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/40 transition-colors";
+        tr.innerHTML = `
+          <td class="p-4">
+            <span class="font-bold text-slate-900 block">${cli.nome}</span>
+            <span class="text-[11px] text-slate-400">ID: #${cli.id.toString().slice(-4)}</span>
+          </td>
+          <td class="p-4 text-slate-700">
+            <a href="${linkWhats}" target="_blank" class="text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1">
+              <span>💬</span> ${cli.telefone}
+            </a>
+          </td>
+          <td class="p-4 text-xs text-slate-600 max-w-xs">
+            ${cli.preferencias ? `<span class="bg-amber-100 text-amber-900 px-2 py-1 rounded-md inline-block font-medium">${cli.preferencias}</span>` : '<span class="text-slate-400">Sem observações</span>'}
+          </td>
+          <td class="p-4 text-center font-bold text-slate-700">
+            ${cli.totalPedidos || 1}
+          </td>
+          <td class="p-4 font-bold text-emerald-700">
+            ${formatarMoeda(cli.totalGasto || 0)}
+          </td>
+          <td class="p-4 text-right">
+            <button onclick="selecionarClienteParaPedido('${cli.nome}')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold px-2.5 py-1.5 rounded-lg border border-amber-200 transition">
+              + Novo Pedido
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      atualizarDatalistClientes();
+    }
+
+    function filtrarClientes() {
+      renderizarClientes();
+    }
+
+    function selecionarClienteParaPedido(nomeCliente) {
+      alternarAba('pedido');
+      const campoNome = document.getElementById('pedido-cliente-nome');
+      campoNome.value = nomeCliente;
+      campoNome.dispatchEvent(new Event('input'));
+    }
+
+    function salvarNovoCliente(e) {
+      e.preventDefault();
+      const nome = document.getElementById('novo-cli-nome').value.trim();
+      const telefone = document.getElementById('novo-cli-telefone').value.trim();
+      const obs = document.getElementById('novo-cli-obs').value.trim();
+
+      state.clientes.unshift({
+        id: Date.now(),
+        nome,
+        telefone,
+        preferencias: obs,
+        totalPedidos: 0,
+        totalGasto: 0
+      });
+
+      salvarEstado('clientes');
+      renderizarClientes();
+      fecharModal('modal-novo-cliente');
+      e.target.reset();
+      exibirToast(`Cliente ${nome} cadastrado na Saborê!`, 'success');
+    }
+
+    function atualizarDatalistClientes() {
+      const datalist = document.getElementById('clientes-datalist');
+      if (!datalist) return;
+      datalist.innerHTML = '';
+      state.clientes.forEach(cli => {
+        const option = document.createElement('option');
+        option.value = cli.nome;
+        option.label = `${cli.telefone} ${cli.preferencias ? '• ' + cli.preferencias : ''}`;
+        datalist.appendChild(option);
+      });
+    }
+
+    let categoriaGerenciadorTipoAtual = 'despesa';
+
+    function mudarTipoGerenciadorCategoria(tipo) {
+      categoriaGerenciadorTipoAtual = tipo;
+      const tabDespesa = document.getElementById('tab-cat-despesa');
+      const tabReceita = document.getElementById('tab-cat-receita');
+
+      if (tipo === 'despesa') {
+        tabDespesa.className = 'flex-1 py-1.5 rounded-lg transition bg-white text-rose-700 shadow-xs font-bold';
+        tabReceita.className = 'flex-1 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900';
+      } else {
+        tabReceita.className = 'flex-1 py-1.5 rounded-lg transition bg-white text-emerald-700 shadow-xs font-bold';
+        tabDespesa.className = 'flex-1 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900';
+      }
+      renderizarListaCategoriasModal();
+    }
+
+    function abrirModalGerenciarCategorias() {
+      const tipoModalTransacao = document.getElementById('transacao-tipo')?.value || 'despesa';
+      mudarTipoGerenciadorCategoria(tipoModalTransacao);
+      abrirModal('modal-gerenciar-categorias');
+    }
+
+    function renderizarListaCategoriasModal() {
+      const listaEl = document.getElementById('lista-categorias-gerenciador');
+      if (!listaEl) return;
+      listaEl.innerHTML = '';
+
+      const categorias = categoriaGerenciadorTipoAtual === 'despesa'
+        ? state.categoriasDespesas
+        : state.categoriasReceitas;
+
+      if (!categorias || categorias.length === 0) {
+        listaEl.innerHTML = `<li class="p-4 text-center text-xs text-slate-400">Nenhuma categoria cadastrada.</li>`;
+        return;
+      }
+
+      categorias.forEach((cat, index) => {
+        const li = document.createElement('li');
+        li.className = "flex items-center justify-between px-3 py-2 text-xs hover:bg-slate-50 transition";
+        li.innerHTML = `
+          <span class="font-medium text-slate-800" id="cat-text-${index}">${cat}</span>
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="iniciarEdicaoCategoria(${index})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold" title="Editar nome">
+              ✏️
+            </button>
+            <button type="button" onclick="excluirCategoria(${index})" class="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg font-semibold" title="Excluir categoria">
+              🗑️
+            </button>
+          </div>
+        `;
+        listaEl.appendChild(li);
+      });
+    }
+
+    function salvarNovaCategoria(e) {
+      e.preventDefault();
+      const input = document.getElementById('input-nova-categoria-nome');
+      const nome = input.value.trim();
+      if (!nome) return;
+
+      if (categoriaGerenciadorTipoAtual === 'despesa') {
+        if (!state.categoriasDespesas.includes(nome)) {
+          state.categoriasDespesas.push(nome);
+          salvarEstado('categoriasDespesas');
+        }
+      } else {
+        if (!state.categoriasReceitas.includes(nome)) {
+          state.categoriasReceitas.push(nome);
+          salvarEstado('categoriasReceitas');
+        }
+      }
+
+      input.value = '';
+      renderizarListaCategoriasModal();
+      atualizarSelectCategoriasModalTransacao(nome);
+      exibirToast(`Categoria "${nome}" adicionada com sucesso!`, 'success');
+    }
+
+    function iniciarEdicaoCategoria(index) {
+      const categorias = categoriaGerenciadorTipoAtual === 'despesa'
+        ? state.categoriasDespesas
+        : state.categoriasReceitas;
+
+      const valorAtual = categorias[index];
+      const itemEl = document.getElementById(`cat-text-${index}`);
+      if (!itemEl) return;
+
+      itemEl.parentElement.innerHTML = `
+        <div class="flex items-center gap-1.5 w-full py-0.5">
+          <input type="text" id="input-edit-cat-${index}" value="${valorAtual}" class="flex-1 rounded-lg border border-amber-400 p-1.5 text-xs focus:outline-none bg-amber-50/40 font-medium">
+          <button type="button" onclick="concluirEdicaoCategoria(${index})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1.5 rounded-lg text-xs font-bold" title="Salvar">
+            Salvar
+          </button>
+          <button type="button" onclick="renderizarListaCategoriasModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1.5 rounded-lg text-xs" title="Cancelar">
+            ✕
+          </button>
+        </div>
+      `;
+
+      const input = document.getElementById(`input-edit-cat-${index}`);
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+
+    function concluirEdicaoCategoria(index) {
+      const input = document.getElementById(`input-edit-cat-${index}`);
+      if (!input) return;
+      const novoNome = input.value.trim();
+      if (!novoNome) return;
+
+      const categorias = categoriaGerenciadorTipoAtual === 'despesa'
+        ? state.categoriasDespesas
+        : state.categoriasReceitas;
+
+      categorias[index] = novoNome;
+      salvarEstado(categoriaGerenciadorTipoAtual === 'despesa' ? 'categoriasDespesas' : 'categoriasReceitas');
+      renderizarListaCategoriasModal();
+      atualizarSelectCategoriasModalTransacao(novoNome);
+      exibirToast(`Categoria renomeada para "${novoNome}"!`, 'info');
+    }
+
+    function excluirCategoria(index) {
+      const categorias = categoriaGerenciadorTipoAtual === 'despesa'
+        ? state.categoriasDespesas
+        : state.categoriasReceitas;
+
+      const nomeExcluido = categorias[index];
+      categorias.splice(index, 1);
+      salvarEstado(categoriaGerenciadorTipoAtual === 'despesa' ? 'categoriasDespesas' : 'categoriasReceitas');
+      renderizarListaCategoriasModal();
+      atualizarSelectCategoriasModalTransacao();
+      exibirToast(`Categoria "${nomeExcluido}" removida.`, 'warning');
+    }
+
+    function atualizarSelectCategoriasModalTransacao(selecionarValor = null) {
+      const tipo = document.getElementById('transacao-tipo')?.value || 'despesa';
+      const selectCategoria = document.getElementById('transacao-categoria');
+      if (!selectCategoria) return;
+
+      const categorias = tipo === 'despesa' ? state.categoriasDespesas : state.categoriasReceitas;
+      const valorAtual = selecionarValor || selectCategoria.value;
+
+      selectCategoria.innerHTML = categorias.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+
+      if (valorAtual && categorias.includes(valorAtual)) {
+        selectCategoria.value = valorAtual;
+      }
+    }
+
+    function abrirModalNovaTransacao(tipo = 'despesa') {
+      const campoTipo = document.getElementById('transacao-tipo');
+      if (campoTipo) campoTipo.value = tipo;
+
+      const tituloModal = document.getElementById('modal-transacao-titulo');
+      const subtituloModal = document.getElementById('modal-transacao-subtitulo');
+      const containerReceita = document.getElementById('campos-transacao-receita');
+      const containerDespesa = document.getElementById('campos-transacao-despesa');
+      const btnSalvar = document.getElementById('btn-salvar-transacao');
+
+      const elFornecedor = document.getElementById('transacao-fornecedor');
+      if (elFornecedor) elFornecedor.value = '';
+      const elNf = document.getElementById('transacao-nf');
+      if (elNf) elNf.value = '';
+      const elCliente = document.getElementById('transacao-cliente');
+      if (elCliente) elCliente.value = '';
+      const elPedidoId = document.getElementById('transacao-pedido-id');
+      if (elPedidoId) elPedidoId.value = '';
+      const elDescricao = document.getElementById('transacao-descricao');
+      if (elDescricao) elDescricao.value = '';
+      const elValor = document.getElementById('transacao-valor');
+      if (elValor) elValor.value = '';
+
+      if (tipo === 'receita') {
+        if (tituloModal) tituloModal.innerHTML = '<span>💰</span> Lançar Entrada de Receita';
+        if (subtituloModal) subtituloModal.textContent = 'Informe o cliente, número do pedido e método de pagamento recebido';
+        if (containerReceita) containerReceita.classList.remove('hidden');
+        if (containerDespesa) containerDespesa.classList.add('hidden');
+        if (btnSalvar) {
+          btnSalvar.className = 'px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs';
+          btnSalvar.textContent = 'Registrar Entrada';
+        }
+      } else {
+        if (tituloModal) tituloModal.innerHTML = '<span>💸</span> Lançar Despesa / Saída';
+        if (subtituloModal) subtituloModal.textContent = 'Informe o fornecedor, número da nota fiscal e categoria do custo';
+        if (containerReceita) containerReceita.classList.add('hidden');
+        if (containerDespesa) containerDespesa.classList.remove('hidden');
+        if (btnSalvar) {
+          btnSalvar.className = 'px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-xs';
+          btnSalvar.textContent = 'Registrar Despesa';
+        }
+      }
+
+      atualizarSelectCategoriasModalTransacao();
+      abrirModal('modal-nova-transacao');
+    }
+
+    function salvarNovaTransacao(e) {
+      e.preventDefault();
+      const tipo = document.getElementById('transacao-tipo')?.value || 'despesa';
+      const descricao = document.getElementById('transacao-descricao')?.value.trim() || '';
+      const valor = parseFloat(document.getElementById('transacao-valor')?.value) || 0;
+      const categoria = document.getElementById('transacao-categoria')?.value || 'Outras Despesas';
+
+      if (!descricao || valor <= 0) {
+        exibirToast("Informe uma descrição e um valor maior que zero.", "warning");
+        return;
+      }
+
+      const novaTransacao = {
+        id: Date.now(),
+        tipo,
+        descricao,
+        categoria,
+        valor,
+        data: obterDataRelativa(0)
+      };
+
+      if (tipo === 'despesa') {
+        novaTransacao.fornecedor = document.getElementById('transacao-fornecedor')?.value.trim() || 'Diversos';
+        novaTransacao.numeroNF = document.getElementById('transacao-nf')?.value.trim() || '';
+      } else {
+        novaTransacao.cliente = document.getElementById('transacao-cliente')?.value.trim() || 'Balcão / Avulso';
+        novaTransacao.pedidoId = document.getElementById('transacao-pedido-id')?.value.trim() || '';
+        novaTransacao.formaRecebimento = document.getElementById('transacao-forma-recebimento')?.value || 'Pix';
+      }
+
+      state.transacoes.unshift(novaTransacao);
+      salvarEstado('transacoes');
+      renderizarFinanceiro();
+      fecharModal('modal-nova-transacao');
+      e.target.reset();
+      exibirToast(`Lançamento de ${formatarMoeda(valor)} registrado com sucesso!`, 'success');
+    }
+
+    function renderizarFinanceiro() {
+      let totalReceitas = 0;
+      let totalDespesas = 0;
+
+      state.transacoes.forEach(t => {
+        if (t.tipo === 'receita') {
+          totalReceitas += Number(t.valor || 0);
+        } else {
+          totalDespesas += Number(t.valor || 0);
+        }
+      });
+
+      let totalAReceber = 0;
+      state.pedidos.forEach(p => {
+        const saldo = Math.max(0, (p.valorTotal || 0) - (p.valorSinal || 0));
+        totalAReceber += saldo;
+      });
+
+      const saldoLiquido = totalReceitas - totalDespesas;
+
+      const elReceitas = document.getElementById('fin-total-receitas');
+      const elDespesas = document.getElementById('fin-total-despesas');
+      const elSaldo = document.getElementById('fin-saldo-liquido');
+      const elAReceber = document.getElementById('fin-total-a-receber');
+
+      if (elReceitas) elReceitas.textContent = formatarMoeda(totalReceitas);
+      if (elDespesas) elDespesas.textContent = formatarMoeda(totalDespesas);
+      if (elSaldo) elSaldo.textContent = formatarMoeda(saldoLiquido);
+      if (elAReceber) elAReceber.textContent = formatarMoeda(totalAReceber);
+
+      const tbody = document.getElementById('tabela-transacoes-corpo');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (state.transacoes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-slate-400">Nenhuma transação financeira registrada.</td></tr>`;
+        return;
+      }
+
+      state.transacoes.forEach(t => {
+        const isReceita = t.tipo === 'receita';
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/30 transition-colors";
+        tr.innerHTML = `
+          <td class="p-3 text-xs text-slate-500 font-mono">${formatarDataBR(t.data)}</td>
+          <td class="p-3 text-xs">
+            <span class="font-bold text-slate-800 block">${t.descricao}</span>
+            <div class="text-[11px] text-slate-500 mt-0.5">
+              ${isReceita
+                ? `${t.cliente ? 'Cliente: ' + t.cliente : ''} ${t.pedidoId ? ' • Pedido: ' + t.pedidoId : ''} ${t.formaRecebimento ? ' • Forma: ' + t.formaRecebimento : ''}`
+                : `${t.fornecedor ? 'Fornecedor: ' + t.fornecedor : ''} ${t.numeroNF ? ' • NF: ' + t.numeroNF : ''}`}
+            </div>
+          </td>
+          <td class="p-3 text-xs">
+            <span class="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded text-[11px]">${t.categoria || 'Geral'}</span>
+          </td>
+          <td class="p-3 text-xs font-bold">
+            <span class="px-2 py-0.5 rounded-full text-[10px] ${isReceita ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+              ${isReceita ? 'Entrada' : 'Saída'}
+            </span>
+          </td>
+          <td class="p-3 text-xs text-right font-mono font-bold ${isReceita ? 'text-emerald-600' : 'text-rose-600'}">
+            ${isReceita ? '+' : '-'} ${formatarMoeda(t.valor)}
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="excluirTransacao(${t.id})" class="text-slate-400 hover:text-rose-600 transition text-xs font-semibold p-1" title="Excluir lançamento">
+              🗑️
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function excluirTransacao(id) {
+      state.transacoes = state.transacoes.filter(t => t.id !== id);
+      salvarEstado('transacoes');
+      renderizarFinanceiro();
+      exibirToast("Lançamento cancelado.", "info");
+    }
+
+    function abrirModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) el.classList.remove('hidden');
+    }
+
+    function fecharModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) el.classList.add('hidden');
+    }
+
+    function abrirModalNovoInsumo() { abrirModal('modal-novo-insumo'); }
+    function abrirModalNovoCliente() { abrirModal('modal-novo-cliente'); }
+
+    function atualizarBadges() {
+      const fila = state.pedidos.filter(p => p.statusKDS === 'fila').length;
+      const producao = state.pedidos.filter(p => p.statusKDS === 'producao').length;
+      const total = fila + producao;
+      const badge = document.getElementById('badge-kds-count');
+      if (badge) {
+        if (total > 0) {
+          badge.textContent = total;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      const pendentesPgto = state.pedidos.filter(p => p.statusPagamento !== 'Totalmente Pago').length;
+      const badgeEncomendas = document.getElementById('badge-encomendas-pendentes');
+      if (badgeEncomendas) {
+        if (pendentesPgto > 0) {
+          badgeEncomendas.textContent = pendentesPgto;
+          badgeEncomendas.classList.remove('hidden');
+        } else {
+          badgeEncomendas.classList.add('hidden');
+        }
+      }
+    }
+
+    function atualizarTodaInterface() {
+      atualizarProximoIdPedido();
+      atualizarDatalistClientes();
+      renderizarEncomendas();
+      renderizarKDS();
+      renderizarFichas();
+      renderizarCustoPorGrama();
+      renderizarCompras();
+      renderizarEstoque();
+      renderizarClientes();
+      renderizarFinanceiro();
+      atualizarBadges();
+    }
+
+    window.onload = function() {
+      const inputData = document.getElementById('pedido-data-entrega');
+      if (inputData) {
+        inputData.value = obterDataRelativa(0);
+      }
+
+      const inputNome = document.getElementById('pedido-cliente-nome');
+      if (inputNome) {
+        inputNome.addEventListener('input', function(e) {
+          const achado = state.clientes.find(c => c.nome.toLowerCase() === e.target.value.toLowerCase().trim());
+          if (achado) {
+            document.getElementById('pedido-cliente-telefone').value = achado.telefone;
+            const obsEl = document.getElementById('pedido-observacoes');
+            if (achado.preferencias && !obsEl.value) {
+              obsEl.value = `Pref: ${achado.preferencias}`;
+            }
+          }
+        });
+      }
+
+      carregarEstado();
+      atualizarTodaInterface();
+    };
+  </script>
+</body>
+</html>
